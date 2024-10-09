@@ -1,8 +1,9 @@
 <?php
 $base_url = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/';
 $base_url2 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/guidelines/';
-$base_url_inventory = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/inventory/'; // Inventory base URL
-$base_url_settings = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/settings/'; // Settings base URL
+$base_url_inventory = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/inventory/';
+$base_url_settings = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/settings/';
+$base_url_user = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/user/';
 
 $current_page = basename($_SERVER['PHP_SELF']);
 
@@ -24,7 +25,7 @@ $is_settings_active = in_array($current_page, $settings_pages);
             <img src="<?php echo $base_url; ?>assets/img/pig-logo.png">
         </a>
         <div class="welcome-message">
-            <p>Welcome, Admin</p>
+            <p>Welcome, <?= isset($_SESSION['u']) ? htmlspecialchars($_SESSION['u']) : 'Guest'; ?></p>
         </div>
     </div>
 
@@ -33,6 +34,20 @@ $is_settings_active = in_array($current_page, $settings_pages);
             <a class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>" href="<?php echo $base_url; ?>dashboard.php">
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link <?php echo ($current_page == 'profile.php') ? 'active' : ''; ?>" href="<?php echo $base_url_user; ?>profile.php">
+                <i class="bi bi-person"></i>
+                <span>Manage Profile</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link <?php echo ($current_page == 'user.php') ? 'active' : ''; ?>" href="<?php echo $base_url_user; ?>user.php">
+                <i class="bi bi-people"></i>
+                <span>Manage User</span>
             </a>
         </li>
 

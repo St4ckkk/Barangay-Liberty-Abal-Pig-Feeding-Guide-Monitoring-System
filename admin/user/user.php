@@ -1,13 +1,6 @@
 <?php
-require_once '../core/Database.php';
-require_once '../core/settingsController.php';
-
-if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
-    header('Location: index.php');
-    exit();
-}
-
-$feedings = (new settingsController())->getFeedingTime();
+require_once '../core/userController.php';
+$users = (new userController())->getAllUsers();
 
 ?>
 
@@ -18,7 +11,7 @@ $feedings = (new settingsController())->getFeedingTime();
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Feeding Time</title>
+    <title>Manage User</title>
     <meta content="Dashboard for pig feeding guide and monitoring" name="description">
     <meta content="pig, feeding, monitoring, dashboard" name="keywords">
 
@@ -51,62 +44,75 @@ $feedings = (new settingsController())->getFeedingTime();
 
     <main id="main" class="main" style="margin-top: 100px;">
         <div class="pagetitle">
-            <h1>Feeding Time</h1>
+            <h1>Manage User</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item">Settings</li>
-                    <li class="breadcrumb-item active">Feeding</li>
+                    <li class="breadcrumb-item">Manage</li>
+                    <li class="breadcrumb-item active">User</li>
                 </ol>
             </nav>
         </div>
 
-        <section class="section">
+        <section class="section dashboard">
+            <?php if (!empty($success)): ?>
+                <div class="alert alert-success">
+                    <?php echo $success; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($error)): ?>
+                <div class="alert alert-danger">
+                    <?php echo $error; ?>
+                </div>
+            <?php endif; ?>
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card">
                         <div class="card-header mb-2">
-                            <span>Feeding Time</span>
+                            User Accounts
                         </div>
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <thead>
-                                    <th scope="col">Time</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
                                 </thead>
-
                                 <tbody>
-                                    <?php if (!empty($feedings)) : ?>
-                                        <?php foreach ($feedings as $feeding) : ?>
+                                    <?php if (!empty($users)) : ?>
+                                        <?php foreach ($users as $user) : ?>
                                             <tr>
-                                                <td><?php echo date('g:i A', strtotime($feeding['schedTime'])) ?></td>
+                                                <td><?php echo htmlspecialchars($user['username']) ?></td>
+                                                <td><?php echo htmlspecialchars($user['status']) ?></td>
                                                 <td>
-                                                    <a href="editFeedingTime.php?id=<?php echo $user['schedId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
-                                                    <a href="editFeedingTime.php?id=<?php echo $user['schedId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                    <a href="editUser.php?id=<?php echo $user['userId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+                                                    <a href="deleteUser.php?id=<?php echo $user['userId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                                                 </td>
-                                            <tr>
-
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <tr>
-                                                <td colspan="5">No feeding time found.</td>
                                             </tr>
-                                        <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="5">No users found.</td>
+                                        </tr>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>
+
                 <div class="col-lg-4">
                     <div class="card">
                         <div class="card-header mb-2">
-                            <i class="bi bi-plus-circle"></i> Add Feeding Time
+                            <i class="bi bi-plus-circle"></i> Add User
                         </div>
                         <div class="card-body">
-                            <form action="addFeedingTime.php" method="post">
+                            <form action="addUser.php" method="POST">
                                 <div class="mb-3">
-                                    <label for="feedingTime" class="form-label">Feeding Time</label>
-                                    <input type="time" class="form-control" id="feedingTime" name="schedTime" placeholder="Enter Feeding Time" required>
+                                    <label for="feedName" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="feedName" name="username" placeholder="Enter Username" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Submit</button>
                             </form>
@@ -114,7 +120,11 @@ $feedings = (new settingsController())->getFeedingTime();
                     </div>
                 </div>
             </div>
+            </div>
+
+
         </section>
+
     </main>
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

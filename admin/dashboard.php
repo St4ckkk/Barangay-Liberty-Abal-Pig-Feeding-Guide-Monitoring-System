@@ -1,3 +1,12 @@
+<?php
+include_once './core/Database.php';
+if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+  header('Location: index.php');
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,14 +50,15 @@
       justify-content: center;
       margin-bottom: 15px;
     }
+
     .card-equal-height {
       display: flex;
       flex-direction: column;
     }
+
     .card-equal-height .card-body {
       flex: 1;
     }
-    
   </style>
 </head>
 
