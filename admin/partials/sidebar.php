@@ -29,9 +29,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <span>Manage Pigs</span>
             </a>
         </li>
-        
+
         <li class="nav-item">
-            <a class="nav-link <?php echo ($current_page == 'manageBreeds.php') ? 'active' : ''; ?>" href="<?php echo $base_url3; ?>manageBreeds.php"> <!-- New link for manage breeds -->
+            <a class="nav-link <?php echo ($current_page == 'manageBreeds.php') ? 'active' : ''; ?>" href="<?php echo $base_url2; ?>manageBreeds.php"> <!-- New link for manage breeds -->
                 <i class="bi bi-piggy-bank"></i> 
                 <span>Manage Breeds</span>
             </a>

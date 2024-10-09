@@ -21,12 +21,12 @@ class pigsController
         $query = "
             SELECT pigs.*, breeds.name AS name 
             FROM pigs 
-            JOIN breeds ON pigs.breed_id = breeds.id"; 
+            JOIN breeds ON pigs.breed_id = breeds.id";
 
-        $stmt = $this->db->prepare($query); 
+        $stmt = $this->db->prepare($query);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllPigsByBreedID($breed_id)
@@ -68,6 +68,20 @@ class pigsController
             ':health_status' => $health_status,
             ':pen_number' => $pen_number,
             ':gender' => $gender
+        ];
+        $stmt->execute($params);
+        return $stmt->rowCount();
+    }
+
+
+    public function addBreeds($name, $description)
+    {
+
+        $query = "INSERT INTO breeds (name, description) VALUES (:name, :description)";
+        $stmt = $this->db->prepare($query);
+        $params = [
+            ':name' => $name,
+            ':description' => $description
         ];
         $stmt->execute($params);
         return $stmt->rowCount();
