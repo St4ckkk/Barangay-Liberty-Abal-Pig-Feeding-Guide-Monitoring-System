@@ -1,6 +1,6 @@
 <?php
 $base_url = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/';
-
+$base_url2 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/manage-pigs/';
 
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
@@ -23,5 +23,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <span>Dashboard</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link <?php echo ($current_page == 'pigsList.php') ? 'active' : ''; ?>" href="<?php echo $base_url2; ?>pigsList.php">
+                <i class="bi bi-piggy-bank"></i>
+                <span>Manage Pigs</span>
+            </a>
+        </li>
     </ul>
+
+
+
+
+
 </aside><!-- End Sidebar-->
