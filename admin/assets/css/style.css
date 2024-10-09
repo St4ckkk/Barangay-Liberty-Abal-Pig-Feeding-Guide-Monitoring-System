@@ -24,7 +24,7 @@ body {
 }
 
 a {
-  color: #4154f1;
+  color: #418091;;
   text-decoration: none;
 }
 
@@ -67,7 +67,7 @@ h6 {
   font-size: 24px;
   margin-bottom: 0;
   font-weight: 600;
-  color: #1916a3;
+  color: #418091;;
 }
 
 /*--------------------------------------------------------------
@@ -389,7 +389,7 @@ h6 {
   z-index: 997;
   height: 60px;
   box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
-  background: #1916a3;
+  background: #418091;
   color: #ffffff;
   padding-left: 20px;
   /* Toggle Sidebar Button */
@@ -752,7 +752,7 @@ h6 {
 }
 
 .sidebar-nav .nav-link:hover {
-  color: #1916a3;
+  color: #418091;;
   background: #f6f9ff;
 }
 
@@ -780,7 +780,7 @@ h6 {
   align-items: center;
   font-size: 14px;
   font-weight: 600;
-  color: #1916a3;
+  color: #418091;;
   transition: 0.3s;
   padding: 10px 0 10px 40px;
 }
@@ -793,7 +793,7 @@ h6 {
 }
 .sidebar-nav .nav-link.active {
   color: #ffffff;
-  background: #1916a3;
+  background: #418091;;
   border-radius: 5px;
 }
 
@@ -828,7 +828,7 @@ h6 {
 
 .dashboard .filter .icon:hover,
 .dashboard .filter .icon:focus {
-  color: #4154f1;
+  color: #418091;;
 }
 
 .dashboard .filter .dropdown-header {
@@ -872,7 +872,7 @@ h6 {
 }
 
 .dashboard .sales-card .card-icon {
-  color: #4154f1;
+  color: #418091;;
   background: #f6f6fe;
 }
 
