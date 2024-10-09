@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Pig Feeding Guide and Monitoring Dashboard</title>
+    <title>Health Guidelines</title>
     <meta content="Dashboard for pig feeding guide and monitoring" name="description">
     <meta content="pig, feeding, monitoring, dashboard" name="keywords">
 
@@ -27,30 +26,7 @@
     <link href="../assets/css/style.css" rel="stylesheet">
 
     <style>
-        .card-icon {
-            font-size: 32px;
-            line-height: 0;
-            width: 64px;
-            height: 64px;
-            flex-shrink: 0;
-            flex-grow: 0;
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
 
-        .card-equal-height {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-equal-height .card-body {
-            flex: 1;
-        }
     </style>
 </head>
 
@@ -62,11 +38,12 @@
 
     <main id="main" class="main" style="margin-top: 100px;">
         <div class="pagetitle">
-            <h1>List Of Breeds</h1>
+            <h1>Health Guidelines</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item active">Manage Breeds</li>
+                    <li class="breadcrumb-item">Guidelines</li>
+                    <li class="breadcrumb-item active">Health</li>
                 </ol>
             </nav>
         </div>
@@ -75,56 +52,47 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
+                        <div class="card-header mb-2">
+                            <span>Health Guidelines</span>
+                        </div>
                         <div class="card-body">
-                            <h5 class="card-title">List of Breeds</h5>
-                            <button type="button" class="btn btn-success float-end mb-3" data-bs-toggle="modal" data-bs-target="#addBreed">
-                                Add Breed
-                            </button>
+                            <div class="float-end mb-3">
+                                <button type="button" class="btn btn-primary  data-bs-toggle=" modal" data-bs-target="#addGuidelines">
+                                    Add <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
                             <table class="table table-bordered">
                                 <thead>
-                                    <tr>
-                                        <th scope="col">Breed name</th>
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Action</th>
                                 </thead>
-                                <tbody>
-                                    <?php foreach ($breeds as $breed) : ?>
-                                        <tr>
-                                            <td><?= $breed['name'] ?></td>
-                                            <td><?= $breed['description'] ?></td>
-                                            <td>
-                                                <a href="editBreed.php?id=<?= $breed['id'] ?>" class="btn btn-primary">Edit</a>
-                                                <a href="deleteBreed.php?id=<?= $breed['id'] ?>" class="btn btn-danger">Delete</a>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
                             </table>
+                            <tbody>
+
+                            </tbody>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Modal -->
-            <!-- Modal -->
-            <div class="modal fade" id="addBreed" tabindex="-1" aria-labelledby="addPigModalLabel" aria-hidden="true">
+            <div class="modal fade" id="addGuidelines" tabindex="-1" aria-labelledby="addPigModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="addPigModalLabel">Add New Breed</h5>
+                            <h5 class="modal-title" id="addPigModalLabel">Add New Guidelines</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form action="addBreed.php" method="POST">
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="breedName" class="form-label">Breed Name</label>
+                                        <label for="breedName" class="form-label">Title</label>
                                         <input type="text" class="form-control" id="name" name="name" required>
                                         <label for="breed" class="form-label">Description</label>
                                         <textarea name="description" id="" class="form-control"></textarea>
                                     </div>
-                                   
+
                                 </div>
                                 <button type="submit" class="btn btn-primary">Add Breed</button>
                             </form>
@@ -132,15 +100,36 @@
                     </div>
                 </div>
             </div>
-
-
         </section>
+        <div class="modal fade" id="addGuidelines" tabindex="-1" aria-labelledby="addPigModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addPigModalLabel">Add New Guidelines</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="addGuidelines.php" method="POST">
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="breedName" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="name" name="title" required>
+                                    <label for="breed" class="form-label">Description</label>
+                                    <textarea name="description" id="" class="form-control"></textarea>
+                                </div>
 
-    </main><!-- End #main -->
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-    <!-- Vendor JS Files -->
+
     <script src="../assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/vendor/chart.js/chart.umd.js"></script>
