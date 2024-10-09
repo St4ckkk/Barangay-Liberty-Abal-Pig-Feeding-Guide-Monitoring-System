@@ -29,6 +29,23 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <span>Manage Pigs</span>
             </a>
         </li>
+        
+        <li class="nav-item">
+            <a class="nav-link <?php echo ($current_page == 'manageBreeds.php') ? 'active' : ''; ?>" href="<?php echo $base_url3; ?>manageBreeds.php"> <!-- New link for manage breeds -->
+                <i class="bi bi-piggy-bank"></i> 
+                <span>Manage Breeds</span>
+            </a>
+        </li>
+
+
+
+        <li class="nav-item">
+            <a class="nav-link <?php echo ($current_page == 'feedingSchedule.php') ? 'active' : ''; ?>" href="<?php echo $base_url2; ?>feedingSchedule.php"> <!-- New link for feeding schedule -->
+                <i class="bi bi-clock"></i>
+                <span>Feeding Schedule</span>
+            </a>
+        </li>
+
     </ul>
 
 

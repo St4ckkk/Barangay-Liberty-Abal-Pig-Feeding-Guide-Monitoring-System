@@ -3,6 +3,7 @@ require_once '../core/pigController.php';
 
 $pigController = new pigsController();
 $pigs = $pigController->getAllPigs();
+$breeds = $pigController->getAllBreeds();
 ?>
 
 <!DOCTYPE html>
@@ -103,7 +104,7 @@ $pigs = $pigController->getAllPigs();
                                     <?php foreach ($pigs as $pig) : ?>
                                         <tr>
                                             <td><?= $pig['ear_tag_number'] ?></td>
-                                            <td><?= $pig['breed'] ?></td>
+                                            <td><?= $pig['name'] ?></td>
                                             <td><?= $pig['birth_date'] ?></td>
                                             <td><?= $pig['weight'] ?></td>
                                             <td><?= $pig['health_status'] ?></td>
@@ -140,7 +141,12 @@ $pigs = $pigController->getAllPigs();
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="breed" class="form-label">Breed</label>
-                                        <input type="text" class="form-control" id="breed" name="breed" required>
+                                        <select name="breed" id="breed" class="form-control">
+                                            <option value="">Select a breed</option> 
+                                            <?php foreach ($breeds as $breed): ?> 
+                                                <option value="<?php echo $breed['id']; ?>"><?php echo htmlspecialchars($breed['name']); ?></option> <!-- Display breed name -->
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="row">
