@@ -1,10 +1,3 @@
-<?php
-require_once '../core/pigController.php';
-
-$pigController = new pigsController();
-$pigs = $pigController->getAllPigs();
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +5,7 @@ $pigs = $pigController->getAllPigs();
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Pig Feeding Guide and Monitoring Dashboard</title>
+    <title>Pigs</title>
     <meta content="Dashboard for pig feeding guide and monitoring" name="description">
     <meta content="pig, feeding, monitoring, dashboard" name="keywords">
 
@@ -33,30 +26,7 @@ $pigs = $pigController->getAllPigs();
     <link href="../assets/css/style.css" rel="stylesheet">
 
     <style>
-        .card-icon {
-            font-size: 32px;
-            line-height: 0;
-            width: 64px;
-            height: 64px;
-            flex-shrink: 0;
-            flex-grow: 0;
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
 
-        .card-equal-height {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-equal-height .card-body {
-            flex: 1;
-        }
     </style>
 </head>
 
@@ -68,28 +38,26 @@ $pigs = $pigController->getAllPigs();
 
     <main id="main" class="main" style="margin-top: 100px;">
         <div class="pagetitle">
-            <h1>Feeding Schedule</h1>
+            <h1>Feeding Time</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item active">Manage Pigs</li>
+                    <li class="breadcrumb-item">Settings</li>
+                    <li class="breadcrumb-item active">Feeding</li>
                 </ol>
             </nav>
         </div>
 
-        <section class="section dashboard">
+        <section class="section">
             <div class="row">
 
             </div>
-
-
         </section>
-
-    </main><!-- End #main -->
+    </main>
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-    <!-- Vendor JS Files -->
+
     <script src="../assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/vendor/chart.js/chart.umd.js"></script>

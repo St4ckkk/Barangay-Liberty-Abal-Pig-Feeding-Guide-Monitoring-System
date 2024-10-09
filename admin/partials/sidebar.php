@@ -1,18 +1,21 @@
-]<?php
-    $base_url = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/';
-    $base_url2 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/guidelines/';
-    $base_url_inventory = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/inventory/'; // Inventory base URL
+<?php
+$base_url = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/';
+$base_url2 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/guidelines/';
+$base_url_inventory = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/inventory/'; // Inventory base URL
+$base_url_settings = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/settings/'; // Settings base URL
 
-    $current_page = basename($_SERVER['PHP_SELF']);
+$current_page = basename($_SERVER['PHP_SELF']);
 
-    // Define the pages under the Guidelines section
-    $guidelines_pages = ['feeding-guidelines.php', 'health-guidelines.php', 'pigs-guidelines.php', 'disinfection-guidelines.php'];
-    $is_guidelines_active = in_array($current_page, $guidelines_pages);
 
-    // Define the pages under the Inventory section
-    $inventory_pages = ['feedStocks.php', 'vitStocks.php', 'pigs.php']; // Add your inventory pages here
-    $is_inventory_active = in_array($current_page, $inventory_pages);
-    ?>
+$guidelines_pages = ['feeding-guidelines.php', 'health-guidelines.php', 'pigs-guidelines.php', 'disinfection-guidelines.php'];
+$is_guidelines_active = in_array($current_page, $guidelines_pages);
+
+$inventory_pages = ['feedStocks.php', 'vitStocks.php', 'pigs.php'];
+$is_inventory_active = in_array($current_page, $inventory_pages);
+
+$settings_pages = ['feedingTime.php', 'biv.php', 'cleaningPeriod.php', 'harvestTime.php', 'slaughteringPeriod.php'];
+$is_settings_active = in_array($current_page, $settings_pages);
+?>
 
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
@@ -41,22 +44,22 @@
             <ul id="components-nav" class="nav-content collapse <?php echo $is_guidelines_active ? 'show' : ''; ?>" data-bs-parent="#sidebar-nav">
                 <li>
                     <a href="<?php echo $base_url2; ?>feeding-guidelines.php" class="<?php echo ($current_page == 'feeding-guidelines.php') ? 'active' : ''; ?>">
-                        <i class="bi bi-circle"></i><span>Feeding Guidelines</span>
+                        <span>Feeding Guidelines</span>
                     </a>
                 </li>
                 <li>
                     <a href="<?php echo $base_url2; ?>health-guidelines.php" class="<?php echo ($current_page == 'health-guidelines.php') ? 'active' : ''; ?>">
-                        <i class="bi bi-circle"></i><span>Health Guidelines</span>
+                        <span>Health Guidelines</span>
                     </a>
                 </li>
                 <li>
                     <a href="<?php echo $base_url2; ?>pigs-guidelines.php" class="<?php echo ($current_page == 'pigs-guidelines.php') ? 'active' : ''; ?>">
-                        <i class="bi bi-circle"></i><span>Types Of Pigs</span>
+                        <span>Types Of Pigs</span>
                     </a>
                 </li>
                 <li>
                     <a href="<?php echo $base_url2; ?>disinfection-guidelines.php" class="<?php echo ($current_page == 'disinfection-guidelines.php') ? 'active' : ''; ?>">
-                        <i class="bi bi-circle"></i><span>Disinfection Guidelines</span>
+                        <span>Disinfection Guidelines</span>
                     </a>
                 </li>
             </ul>
@@ -69,18 +72,52 @@
             </a>
             <ul id="inventory-nav" class="nav-content collapse <?php echo $is_inventory_active ? 'show' : ''; ?>" data-bs-parent="#sidebar-nav">
                 <li>
-                    <a href="<?php echo $base_url_inventory; ?>feedStocks.php" class="<?php echo ($current_page == 'inventory-list.php') ? 'active' : ''; ?>">
-                        <i class="bi bi-circle"></i><span>Feed Stocks</span>
+                    <a href="<?php echo $base_url_inventory; ?>feedStocks.php" class="<?php echo ($current_page == 'feedStocks.php') ? 'active' : ''; ?>">
+                        </i><span>Feed Stocks</span>
                     </a>
                 </li>
                 <li>
-                    <a href="<?php echo $base_url_inventory; ?>vitStocks.php" class="<?php echo ($current_page == 'inventory-add.php') ? 'active' : ''; ?>">
-                        <i class="bi bi-circle"></i><span>Vitamins/Medicines Stocks</span>
+                    <a href="<?php echo $base_url_inventory; ?>vitStocks.php" class="<?php echo ($current_page == 'vitStocks.php') ? 'active' : ''; ?>">
+                        <span>Vitamins/Medicines Stocks</span>
                     </a>
                 </li>
                 <li>
-                    <a href="<?php echo $base_url_inventory; ?>pigs.php" class="<?php echo ($current_page == 'inventory-report.php') ? 'active' : ''; ?>">
-                        <i class="bi bi-circle"></i><span>Pigs</span>
+                    <a href="<?php echo $base_url_inventory; ?>pigs.php" class="<?php echo ($current_page == 'pigs.php') ? 'active' : ''; ?>">
+                        <span>Pig Pen</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Settings Section -->
+        <li class="nav-item">
+            <a class="nav-link <?php echo $is_settings_active ? '' : 'collapsed'; ?> <?php echo $is_settings_active ? 'active' : ''; ?>" data-bs-target="#settings-nav" data-bs-toggle="collapse" href="#" aria-expanded="<?php echo $is_settings_active ? 'true' : 'false'; ?>">
+                <i class="bi bi-gear"></i><span>Settings</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="settings-nav" class="nav-content collapse <?php echo $is_settings_active ? 'show' : ''; ?>" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="<?php echo $base_url_settings; ?>feedingTime.php" class="<?php echo ($current_page == 'feedingTime.php') ? 'active' : ''; ?>">
+                        <span>Feeding Time</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo $base_url_settings; ?>biv.php" class="<?php echo ($current_page == 'biv.php') ? 'active' : ''; ?>">
+                        <span>Boosting/Injections/Vitamins</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo $base_url_settings; ?>cleaningPeriod.php" class="<?php echo ($current_page == 'cleaningPeriod.php') ? 'active' : ''; ?>">
+                        <span>Cleaning Period</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo $base_url_settings; ?>harvestTime.php" class="<?php echo ($current_page == 'harvestTime.php') ? 'active' : ''; ?>">
+                        <span>Harvest Time</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo $base_url_settings; ?>slaughteringPeriod.php" class="<?php echo ($current_page == 'slaughteringPeriod.php') ? 'active' : ''; ?>">
+                        <span>Slaughtering Period</span>
                     </a>
                 </li>
             </ul>

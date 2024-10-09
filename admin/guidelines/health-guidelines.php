@@ -56,8 +56,8 @@
                             <span>Health Guidelines</span>
                         </div>
                         <div class="card-body">
-                            <div class="float-end mb-3">
-                                <button type="button" class="btn btn-primary  data-bs-toggle=" modal" data-bs-target="#addGuidelines">
+                            <div class="float-end">
+                                <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addGuidelines">
                                     Add <i class="bi bi-plus"></i>
                                 </button>
                             </div>

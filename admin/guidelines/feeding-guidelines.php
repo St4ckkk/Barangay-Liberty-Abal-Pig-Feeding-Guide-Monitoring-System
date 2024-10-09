@@ -56,8 +56,8 @@
                             <span>Feeding Guidelines</span>
                         </div>
                         <div class="card-body">
-                            <div class="float-end mb-3">
-                                <button type="button" class="btn btn-primary  data-bs-toggle=" modal" data-bs-target="#addGuidelines">
+                            <div class="float-end">
+                                <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addGuidelines">
                                     Add <i class="bi bi-plus"></i>
                                 </button>
                             </div>
@@ -71,31 +71,6 @@
                             <tbody>
 
                             </tbody>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="addGuid" tabindex="-1" aria-labelledby="addPigModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addPigModalLabel">Add New Breed</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="addBreed.php" method="POST">
-                                <div class="row">
-                                    <div class="col-md-12 mb-3">
-                                        <label for="breedName" class="form-label">Breed Name</label>
-                                        <input type="text" class="form-control" id="name" name="name" required>
-                                        <label for="breed" class="form-label">Description</label>
-                                        <textarea name="description" id="" class="form-control"></textarea>
-                                    </div>
-
-                                </div>
-                                <button type="submit" class="btn btn-primary">Add Breed</button>
-                            </form>
                         </div>
                     </div>
                 </div>

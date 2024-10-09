@@ -57,13 +57,16 @@
                         </div>
                         <div class="card-body">
                             <table class="table table-bordered">
-                                <tbody>
+                                <thead>
                                     <th scope="col">Feeds Name</th>
                                     <th scope="col">Feeds Description</th>
                                     <th scope="col">Qty of Food Per Sack</th>
                                     <th scope="col">Actions</th>
-                                </tbody>
+                                </thead>
                             </table>
+                            <tbody>
+                                
+                            </tbody>
                         </div>
                     </div>
                 </div>

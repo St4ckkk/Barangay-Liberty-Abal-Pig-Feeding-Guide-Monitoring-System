@@ -57,7 +57,7 @@
                         </div>
                         <div class="card-body">
                             <div class="float-end mb-3">
-                                <button type="button" class="btn btn-primary  data-bs-toggle=" modal" data-bs-target="#addGuidelines">
+                                <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addGuidelines">
                                     Add <i class="bi bi-plus"></i>
                                 </button>
                             </div>
@@ -87,7 +87,7 @@
                         <div class="modal-body">
                             <form action="addBreed.php" method="POST">
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6">
                                         <label for="breedName" class="form-label">Pig Type</label>
                                         <input type="text" class="form-control" id="name" name="pigType" required>
                                         <label for="breed" class="form-label">Breed</label>
@@ -105,7 +105,7 @@
                                         <textarea name="description" id="" class="form-control"></textarea>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="submit" class="btn btn-primary w-100">Save</button>
                             </form>
                         </div>
                     </div>
