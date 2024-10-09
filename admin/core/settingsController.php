@@ -21,9 +21,8 @@ class settingsController
             ':schedTime' => $schedTime,
             ':schedType' => $schedType
         ];
-
         $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
+        return $stmt->execute($params);
     }
 
 

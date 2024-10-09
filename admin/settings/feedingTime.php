@@ -8,6 +8,8 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
 }
 
 $feedings = (new settingsController())->getFeedingTime();
+$success = '';
+$error = '';
 
 ?>
 
@@ -62,6 +64,18 @@ $feedings = (new settingsController())->getFeedingTime();
         </div>
 
         <section class="section">
+            <?php
+            if (isset($_SESSION['error'])) {
+                echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
+                unset($_SESSION['error']); 
+            }
+
+            if (isset($_SESSION['success'])) {
+                echo '<div class="alert alert-success" role="alert">' . $_SESSION['success'] . '</div>';
+                unset($_SESSION['success']);
+            }
+            ?>
+
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card">
