@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Pigs</title>
+    <title>Feeding Time</title>
     <meta content="Dashboard for pig feeding guide and monitoring" name="description">
     <meta content="pig, feeding, monitoring, dashboard" name="keywords">
 
@@ -50,7 +50,37 @@
 
         <section class="section">
             <div class="row">
-
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header mb-2">
+                            <span>Feeding Time</span>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <th scope="col">Time</th>
+                                    <th scope="col">Action</th>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header mb-2">
+                            <i class="bi bi-plus-circle"></i> Add Feeding Time
+                        </div>
+                        <div class="card-body">
+                            <form action="addFeedingTime.php" method="post">
+                                <div class="mb-3">
+                                    <label for="feedingTime" class="form-label">Feeding Time</label>
+                                    <input type="time" class="form-control" id="feedingTime" name="feedingTime" placeholder="Enter Feeding Time" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </main>

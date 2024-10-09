@@ -3,7 +3,7 @@
   <div class="d-flex align-items-center justify-content-between flex-grow-1">
     <a href="index.html" class="logo d-flex align-items-center" style="text-decoration: none;">
       <span class="d-lg-block" style="color: white; font-size: 1.2rem; font-weight: bold;">PIG FEEDING GUIDE AND MONITORING SYSTEM</span>
-    </a>
+    </a>  
     <nav class="header-nav">
       <ul class="d-flex align-items-center m-0">
         <li class="nav-item dropdown pe-3">

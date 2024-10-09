@@ -111,11 +111,6 @@ $is_settings_active = in_array($current_page, $settings_pages);
                     </a>
                 </li>
                 <li>
-                    <a href="<?php echo $base_url_settings; ?>harvestTime.php" class="<?php echo ($current_page == 'harvestTime.php') ? 'active' : ''; ?>">
-                        <span>Harvest Time</span>
-                    </a>
-                </li>
-                <li>
                     <a href="<?php echo $base_url_settings; ?>slaughteringPeriod.php" class="<?php echo ($current_page == 'slaughteringPeriod.php') ? 'active' : ''; ?>">
                         <span>Slaughtering Period</span>
                     </a>

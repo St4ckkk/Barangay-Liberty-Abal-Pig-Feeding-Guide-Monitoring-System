@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Health Guidelines</title>
+    <title>Slaughtering Period</title>
     <meta content="Dashboard for pig feeding guide and monitoring" name="description">
     <meta content="pig, feeding, monitoring, dashboard" name="keywords">
 
@@ -38,75 +38,57 @@
 
     <main id="main" class="main" style="margin-top: 100px;">
         <div class="pagetitle">
-            <h1>Types Of Pigs</h1>
+            <h1>Slaughtering Period</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item">Guidelines</li>
-                    <li class="breadcrumb-item active">Pigs</li>
+                    <li class="breadcrumb-item">Settings</li>
+                    <li class="breadcrumb-item active">Slaughtering</li>
                 </ol>
             </nav>
         </div>
 
-        <section class="section dashboard">
+        <section class="section">
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-8">
                     <div class="card">
                         <div class="card-header mb-2">
-                            <span>Types Of Pigs</span>
+                            <span>Slaughtering Period</span>
                         </div>
                         <div class="card-body">
-                            <div class="float-end mb-3">
-                                <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addGuidelines">
-                                    Add <i class="bi bi-plus"></i>
-                                </button>
-                            </div>
                             <table class="table table-bordered">
                                 <thead>
-                                    <th scope="col">Pig Types</th>
-                                    <th scope="col">Breed</th>
-                                    <th scope="col">Gender</th>
-                                    <th scope="col">Description</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col">Period</th>
+                                    <th scope="col">Actions</th>
                                 </thead>
                             </table>
-                            <tbody>
-                            </tbody>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="modal fade" id="addGuidelines" tabindex="-1" aria-labelledby="addPigModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addPigModalLabel">Add Pigs</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header mb-2">
+                            <i class="bi bi-plus-circle"></i> Add Slaughtering Period
                         </div>
-                        <div class="modal-body">
-                            <form action="addBreed.php" method="POST">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label for="breedName" class="form-label">Pig Type</label>
-                                        <input type="text" class="form-control" id="name" name="pigType" required>
-                                        <label for="breed" class="form-label">Breed</label>
-                                        <input type="text" class="form-control" name="breed">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="" class="form-label">Sex</label>
-                                        <select name="sex" id="" class="form-control">
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-12 mb-3">
-                                        <label for="" class="form-label">Description</label>
-                                        <textarea name="description" id="" class="form-control"></textarea>
-                                    </div>
+                        <div class="card-body">
+                            <form action="addSlaughteringPeriod.php" method="post">
+                                <div class="mb-3">
+                                    <label for="slaughteringPeriod" class="form-label">Slaughtering Period</label>
+                                    <select name="slaughteringPeriod" id="slaughteringPeriod" class="form-control">
+                                        <option value="" disabled selected>Select the slaughtering period</option>
+                                        <option value="5.5">5 months 2 weeks</option>
+                                        <option value="5.6">5 months 3 weeks</option>
+                                        <option value="5.7">5 months 4 weeks (6 months)</option>
+                                        <option value="6.0">6 months</option>
+                                        <option value="6.1">6 months 1 week</option>
+                                        <option value="6.2">6 months 2 weeks</option>
+                                        <option value="6.3">6 months 3 weeks</option>
+                                        <option value="6.4">6 months 4 weeks (7 months)</option>
+                                    </select>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">Save</button>
+                                <button type="submit" class="btn btn-primary w-100">Submit</button>
                             </form>
+
                         </div>
                     </div>
                 </div>
@@ -115,7 +97,6 @@
     </main>
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
 
     <script src="../assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
