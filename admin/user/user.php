@@ -54,7 +54,7 @@ $users = (new userController())->getAllUsers();
             </nav>
         </div>
 
-        <section class="section dashboard">
+        <section class="section">
             <?php if (!empty($success)): ?>
                 <div class="alert alert-success">
                     <?php echo $success; ?>

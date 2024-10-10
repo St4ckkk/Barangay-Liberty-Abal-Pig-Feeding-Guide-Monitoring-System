@@ -1,3 +1,18 @@
+<?php
+require_once '../core/Database.php';
+require_once '../core/guidelinesController.php';
+
+if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+    header('Location: index.php');
+    exit();
+}
+
+$guidelines = (new guidelinesController())->getDisinfectionGuidelines();
+$success = '';
+$error = '';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,7 +63,18 @@
             </nav>
         </div>
 
-        <section class="section dashboard">
+        <section class="section ">
+            <?php
+            if (isset($_SESSION['error'])) {
+                echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
+                unset($_SESSION['error']);
+            }
+
+            if (isset($_SESSION['success'])) {
+                echo '<div class="alert alert-success" role="alert">' . $_SESSION['success'] . '</div>';
+                unset($_SESSION['success']);
+            }
+            ?>
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -65,12 +91,30 @@
                                 <thead>
                                     <th scope="col">Title</th>
                                     <th scope="col">Description</th>
+                                    <th scope="col">Date</th>
                                     <th scope="col">Action</th>
                                 </thead>
+                                <tbody>
+                                    <?php if (!empty($guidelines)) : ?>
+                                        <?php foreach ($guidelines as $guideline) : ?>
+                                            <tr>
+                                                <td><?= $guideline['title'] ?></td>
+                                                <td><?= $guideline['description'] ?></td>
+                                                <td><?= $guideline['guideDate'] ?></td>
+                                                <td>
+                                                    <a href="editDisinfectionGuidelines.php?id=<?= $guideline['guideId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+                                                    <a href="deleteDisinfectionGuidelines.php?id=<?= $guideline['guideId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="5">No Guidelines found.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
                             </table>
-                            <tbody>
 
-                            </tbody>
                         </div>
                     </div>
                 </div>
@@ -84,11 +128,11 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="addBreed.php" method="POST">
+                            <form action="addDisinfectionGuidelines.php" method="POST">
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label for="breedName" class="form-label">Title</label>
-                                        <input type="text" class="form-control" id="name" name="name" required>
+                                        <input type="text" class="form-control" id="name" name="title" required>
                                         <label for="breed" class="form-label">Description</label>
                                         <textarea name="description" id="" class="form-control"></textarea>
                                     </div>

@@ -1,9 +1,9 @@
 <?php
-
+session_start(); 
 require_once '../core/settingsController.php';
 
 $settingsController = new settingsController();
-session_start(); 
+
 $success = '';
 $error = '';
 
