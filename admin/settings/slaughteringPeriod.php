@@ -257,12 +257,13 @@ $error = '';
     </main>
 
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/main.js"></script>aa
     <script>
         const selectedPigs = new Set();
 
         function fetchPigs(penId) {
-            document.getElementById('penId').value = penId; // Set the penId value here
+            document.getElementById('penId').value = penId;
+            console.log(`Fetching pigs for pen ID: ${penId}`);
             if (!penId) {
                 document.getElementById('pigs').innerHTML = '';
                 document.getElementById('selectedPigs').innerHTML = '';
@@ -270,8 +271,17 @@ $error = '';
                 return;
             }
             fetch('fetchPigs.php?penId=' + penId)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    console.log(`Received data: ${JSON.stringify(data)}`);
+                    if (data.error) {
+                        throw new Error(data.message || 'Unknown error occurred');
+                    }
                     let pigsDropdown = document.getElementById('pigs');
                     pigsDropdown.innerHTML = '';
                     if (data.length === 0) {
@@ -290,7 +300,7 @@ $error = '';
                 .catch(error => {
                     console.error('Error fetching pigs:', error);
                     let pigsDropdown = document.getElementById('pigs');
-                    pigsDropdown.innerHTML = '<option>Error fetching pigs</option>';
+                    pigsDropdown.innerHTML = '<option>Error fetching pigs: ' + error.message + '</option>';
                 });
         }
 

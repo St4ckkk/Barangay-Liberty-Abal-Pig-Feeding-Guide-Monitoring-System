@@ -117,15 +117,14 @@ class settingsController
         $stmt->execute();
         return $stmt->fetchAll();
     }
-
     public function getPigsByPen($penId)
     {
-        // Assuming you have a database connection set up
-        $stmt = $this->db->prepare("SELECT * FROM pigs WHERE penId = ?");
-        $stmt->execute([$penId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $query = "SELECT * FROM pigs WHERE penId = :penId";
+        $params = [':penId' => $penId];
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
     }
-
 
     public function updateSlaughteringPeriod($slauId, $status, $slaughtering_date, $slaughtering_time,)
     {
