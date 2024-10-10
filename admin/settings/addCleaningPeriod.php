@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "All fields are required!";
     } else {
         $schedType = 'Cleaning';
-        $result = $settingsController->addSched($schedTime, $schedType);
+        $result = $settingsController->addSchedForCleaning($schedTime, $schedType);
 
         if ($result) {
             $_SESSION['success'] = 'Cleaning Period Successfully Added!';

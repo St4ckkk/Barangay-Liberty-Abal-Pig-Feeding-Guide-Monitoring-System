@@ -12,10 +12,12 @@ $pigs = [];
 $penno = '';
 
 if ($penId) {
-    $inventoryController = new inventoryController();  
-    $pigs = $inventoryController->getPigs($penId);     
-    $penno = $inventoryController->getPenNo($penId);  
+    $inventoryController = new inventoryController();
+    $pigs = $inventoryController->getPigs($penId);
+    $penno = $inventoryController->getPenNo($penId);
 }
+
+$sched = $inventoryController->getFeedingSched();
 
 $inputId = $penId;
 $success = '';
@@ -90,10 +92,26 @@ $error = '';
                             <span>Pigs List</span>
                         </div>
                         <div class="card-body">
+                            <!-- <div class="float-start mb-3 d-flex">
+                                <form>
+                                    <input type="hidden" name="penId" value="<?= $inputId; ?>">
+                                    <select class="form-select float-start me-2" name="schedId" aria-label="Select Feeding Time" onchange="showConfirmModal(this)">
+                                        <option selected>Select Feeding Time</option>
+                                        <?php foreach ($sched as $s) : ?>
+                                            <?php
+                                            $formattedTime = date('h:i A', strtotime($s['schedTime']));
+                                            ?>
+                                            <option value="<?= $s['schedId'] ?>"><?= $formattedTime ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </form>
+
+                            </div> -->
                             <div class="float-end">
                                 <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addPigModal">
                                     Add Pig <i class="bi bi-plus"></i>
                                 </button>
+
                             </div>
                             <table class="table table-bordered">
                                 <thead>
@@ -141,6 +159,25 @@ $error = '';
             </div>
         </section>
 
+        <div class="modal fade" id="confirmFeedingTimeModal" tabindex="-1" aria-labelledby="confirmFeedingTimeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmFeedingTimeModalLabel">Confirm Feeding Time</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to set this feeding time for Pen #<span><?= $penno ? $penno : 'Unknown' ?>?</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="confirmFeedingTimeBtn">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="modal fade" id="addPigModal" tabindex="-1" aria-labelledby="addPigModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -149,7 +186,7 @@ $error = '';
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="addPigs.php" method="POST">
+                        <form action="addPigs.php" method="post">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <input type="hidden" class="form-control" id="penId" name="penId" value="<?= $inputId; ?>">
@@ -158,15 +195,31 @@ $error = '';
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="status" class="form-label">Status</label>
-                                    <input type="text" class="form-control" id="status" name="status" required>
+                                    <select name="status" id="" class="form-control">
+                                        <option value="" selected disabled>Select a Status of The Pig</option>
+                                        <option value="none">None</option>
+                                        <option value="ready for slaughter">Ready For Slaughter</option>
+                                        <option value="ready for breeding">Ready For Breeding</option>
+                                        <option value="ready for selling">Ready For Selling</option>
+                                        <option value="in breeding">In Breeding</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="gender" class="form-label">Gender</label>
-                                    <input type="text" class="form-control" id="gender" name="gender" required>
+                                    <select name="gender" id="" class="form-control">
+                                        <option value="" selected disabled>Select the Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="healthStatus" class="form-label">Health Status</label>
-                                    <input type="text" class="form-control" id="healthStatus" name="health_status" required>
+                                    <select name="health_status" id="" class="form-control">
+                                        <option value="" selected disabled>Select the Health Status</option>
+                                        <option value="healthy">Healthy</option>
+                                        <option value="sick">Sick</option>
+                                        <option value="injured">injured</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="breed" class="form-label">Breed</label>
@@ -203,6 +256,34 @@ $error = '';
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/vendor/simple-datatables/simple-datatables.js"></script>
     <script src="../assets/js/main.js"></script>
+
+    <!-- <script>
+        function showConfirmModal(selectElement) {
+            const modal = new bootstrap.Modal(document.getElementById('confirmFeedingTimeModal'));
+            modal.show();
+            document.getElementById('confirmFeedingTimeBtn').onclick = function() {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'updateFeedingSched.php';
+
+                const penIdInput = document.createElement('input');
+                penIdInput.type = 'hidden';
+                penIdInput.name = 'penId';
+                penIdInput.value = '<?= $inputId; ?>'; // Use the hidden input value
+
+                const feedingTimeInput = document.createElement('input');
+                feedingTimeInput.type = 'hidden';
+                feedingTimeInput.name = 'schedId';
+                feedingTimeInput.value = selectElement.value; // Use selected value from dropdown
+
+                form.appendChild(penIdInput);
+                form.appendChild(feedingTimeInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script> -->
+
 </body>
 
 </html>

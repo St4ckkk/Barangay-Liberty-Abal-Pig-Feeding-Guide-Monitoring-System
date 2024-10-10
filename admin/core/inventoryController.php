@@ -12,12 +12,14 @@ class inventoryController
         $this->db = $database->getConnection();
     }
 
-    public function addFeedStocks($feedsName, $feedsDescription, $QtyOFoodPerSack,)
+    public function addFeedStocks($feedsName, $feedsDescription, $feedsCost, $QtyOFoodPerSack,)
     {
-        $query = "INSERT INTO feedstock (feedsName, feedsDescription, QtyOFoodPerSack) VALUES (:feedsName, :feedsDescription, :QtyOFoodPerSack)";
+        $query = "INSERT INTO feedstock (feedsName, feedsDescription, feedsCost, QtyOFoodPerSack) VALUES (:feedsName, :feedsDescription,  :feedsCost, :QtyOFoodPerSack)";
+
         $params = [
             ':feedsName' => $feedsName,
             ':feedsDescription' => $feedsDescription,
+            ':feedsCost' => $feedsCost,
             ':QtyOFoodPerSack' => $QtyOFoodPerSack
         ];
         $stmt = $this->db->prepare($query);
@@ -32,6 +34,19 @@ class inventoryController
         return $stmt->fetchAll();
     }
 
+
+    public function addExpense($expenseName, $expenseType, $total)
+    {
+        $query = "INSERT INTO expense (expenseName , expenseType, total) VALUES (:expenseName, :expenseType, :total)";
+
+        $params = [
+            ':expenseName' => $expenseName,
+            ':expenseType' => $expenseType,
+            ':total' => $total
+        ];
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
+    }
 
     public function addPigPens($penNo,  $penStatus, $pigCount)
     {
@@ -136,5 +151,67 @@ class inventoryController
         ];
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
+    }
+
+    public function getPenCapacity($penId)
+    {
+        $query = "SELECT pigcount FROM pigpen WHERE penId = :penId";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([':penId' => $penId]);
+        return $stmt->fetchColumn();
+    }
+
+    public function decreasePenCapacity($penId)
+    {
+        $query = "UPDATE pigpen SET pigcount = pigcount - 1 WHERE penId = :penId";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute([':penId' => $penId]);
+    }
+
+    public function removePig($pigId, $penId)
+    {
+        $query = "DELETE FROM pigs WHERE pig_id = :pig_id";
+        $stmt = $this->db->prepare($query);
+        $result = $stmt->execute([':pig_id' => $pigId]);
+
+
+        if ($result) {
+            $this->increasePenCapacity($penId);
+        }
+
+        return $result;
+    }
+
+    public function getPenIdByPigId($pigId)
+    {
+        $query = "SELECT penId FROM pigs WHERE pig_id = :pig_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([':pig_id' => $pigId]);
+        return $stmt->fetchColumn();
+    }
+
+
+    public function increasePenCapacity($penId)
+    {
+        $query = "UPDATE pigpen SET pigcount = pigcount + 1 WHERE penId = :penId";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute([':penId' => $penId]);
+    }
+
+
+    public function getFeedingSched()
+    {
+        $query = "SELECT * FROM schedule where schedType = 'Feeding'";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function updateFeedingSched($penId, $schedId)
+    {
+        $query = "UPDATE schedule SET penId = :penId WHERE schedId = :schedId";
+        $stmt = $this->db->prepare($query);
+
+        return $stmt->execute([':penId' => $penId, ':schedId' => $schedId]);
     }
 }

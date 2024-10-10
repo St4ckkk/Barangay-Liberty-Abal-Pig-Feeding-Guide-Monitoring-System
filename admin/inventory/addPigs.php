@@ -17,25 +17,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $weight = $_POST['weight'] ?? null;
     $age = $_POST['age'] ?? null;
     $notes = $_POST['notes'] ?? null;
+    $penCapacity = $inventory->getPenCapacity($penId);
 
-
-    $result = $inventory->addPigs(
-        $etn,
-        $penId,
-        $status,
-        $gender,
-        $health_status,
-        $breed,
-        $acquisition_date,
-        $weight,
-        $age,
-        $notes
-    );
-    if ($result) {
-        $_SESSION['success'] = "Pigs added successfully!";
+    if ($penCapacity > 0) {
+        $result = $inventory->addPigs(
+            $etn,
+            $penId,
+            $status,
+            $gender,
+            $health_status,
+            $breed,
+            $acquisition_date,
+            $weight,
+            $age,
+            $notes
+        );
+        if ($result) {
+            $inventory->decreasePenCapacity($penId);
+            $_SESSION['success'] = "Pigs added successfully!";
+        } else {
+            $_SESSION['error'] = "Failed to add pigs";
+        }
     } else {
-        $_SESSION['error'] = "Failed to add Pigs";
+        $_SESSION['error'] = "Pigpen is full. Cannot add more pigs.";
     }
+
     header("Location: pigs.php?penId=" . urlencode($penId));
     exit();
 }

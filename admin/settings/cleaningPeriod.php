@@ -85,14 +85,15 @@ $error = '';
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <thead>
-                                    <th scope="col">Period</th>
+                                    <th scope="col">Start Time</th>
                                     <th scope="col">Actions</th>
                                 </thead>
                                 <tbody>
                                     <?php if (!empty($cleanings)) : ?>
                                         <?php foreach ($cleanings as $cleaning) : ?>
                                             <tr>
-                                                <td><?= ($cleaning['schedTime']) ?></td>
+                                                <td><?= date('h:i A', strtotime($cleaning['schedTime'])) ?></td>
+
                                                 <td>
                                                     <a href="editCleaningPeriod.php?id=<?php echo $user['schedId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
                                                     <a href="deleteCleaningPeriod.php?id=<?php echo $user['schedId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
@@ -118,14 +119,8 @@ $error = '';
                         <div class="card-body">
                             <form action="addCleaningPeriod.php" method="post">
                                 <div class="mb-3">
-                                    <label for="feedingTime" class="form-label">Period</label>
-                                    <select name="schedTime" id="period" class="form-control">
-                                        <option value="" disabled selected>Select Cleaning Period</option>
-                                        <option value="daily">Daily</option>
-                                        <option value="weekly">Weekly</option>
-                                        <option value="monthly">Monthly</option>
-                                        <option value="quarterly">Quarterly</option>
-                                    </select>
+                                    <label for="feedingTime" class="form-label">Start Time</label>
+                                    <input type="time" name="schedTime" id="feedingTime" class="form-control">
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Submit</button>
                             </form>
