@@ -1,19 +1,17 @@
 <?php
 require_once '../core/Database.php';
-require_once '../core/guidelinesController.php';
+require_once '../core/expenseController.php';
 
 if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
     header('Location: index.php');
     exit();
 }
 
-$guidelines = (new guidelinesController())->getFeedingGuidelines();
+$expenses = (new expenseController())->getAllExpenses();
 $success = '';
 $error = '';
 
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,9 +20,9 @@ $error = '';
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Feeding Guidelines</title>
-    <meta content="Dashboard for pig feeding guide and monitoring" name="description">
-    <meta content="pig, feeding, monitoring, dashboard" name="keywords">
+    <title>Expense Report - Barangay Liberty Abal Piggery</title>
+    <meta content="Expense report for Barangay Liberty Abal Piggery" name="description">
+    <meta content="pig, expense, report, barangay liberty abal" name="keywords">
 
     <link href="../assets/img/pig-logo.png" rel="icon">
     <link href="../assets/img/pig-logo.png" rel="apple-touch-icon">
@@ -41,10 +39,6 @@ $error = '';
     <link href="../assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
     <link href="../assets/css/style.css" rel="stylesheet">
-
-    <style>
-
-    </style>
 </head>
 
 <body>
@@ -85,61 +79,55 @@ $error = '';
                         </div>
                         <div class="card-body">
                             <div class="float-end">
-                                <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addGuidelines">
-                                    Add <i class="bi bi-plus"></i>
-                                </button>
+                                <a href="expense_report.php" class="btn btn-primary float-end mb-3">
+                                    Generate PDF Report <i class="bi bi-file-earmark-pdf"></i>
+                                </a>
                             </div>
                             <table class="table table-bordered">
                                 <thead>
-                                    <th scope="col">Expense Name</th>
-                                    <th scope="col">Expense Type</th>
-                                    <th scope="col">Expense Cost</th>
-                                    <th scope="col">Action</th>
+                                    <tr>
+                                        <th scope="col">Expense Name</th>
+                                        <th scope="col">Expense Type</th>
+                                        <th scope="col">Expense Cost</th>
+                                        <th scope="col">Expense Date</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                   
+                                    <?php if (!empty($expenses)) : ?>
+                                        <?php foreach ($expenses as $expense) : ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($expense['expenseName']) ?></td>
+                                                <td><?= htmlspecialchars($expense['expenseType']) ?></td>
+                                                <td>₱<?= number_format($expense['total'], 2) ?></td>
+                                                <td><?= date('M d, Y', strtotime($expense['expenseDate'])) ?></td>
+                                                <td>
+                                                    <a href="editDisinfectionGuidelines.php?id=<?= $expense['expenseId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+                                                    <a href="deleteDisinfectionGuidelines.php?id=<?= $expense['expenseId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="5">No expenses found.</td>
+                                        </tr>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
-
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        <div class="modal fade" id="addGuidelines" tabindex="-1" aria-labelledby="addPigModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addPigModalLabel">Add New Feeding Guidelines</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="addFeedingGuidelines.php" method="POST">
-                            <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    <label for="breedName" class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="name" name="title" required>
-                                    <label for="breed" class="form-label">Description</label>
-                                    <textarea name="description" id="" class="form-control"></textarea>
-                                </div>
-
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Save</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
 
     <script src="../assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/vendor/chart.js/chart.umd.js"></script>
     <script src="../assets/vendor/echarts/echarts.min.js"></script>
-    <script src="../assets/vendor/quill/quill.js"></script>
+    <script src="../assets/vendor/quill/quill.min.js"></script>
     <script src="../assets/vendor/simple-datatables/simple-datatables.js"></script>
     <script src="../assets/vendor/tinymce/tinymce.min.js"></script>
     <script src="../assets/vendor/php-email-form/validate.js"></script>
