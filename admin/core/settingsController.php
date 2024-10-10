@@ -42,5 +42,11 @@ class settingsController
         return $stmt->fetchAll();
     }
 
+    public function getSlaughteringPeriod() {
+        $query = "SELECT * FROM schedule WHERE schedType = 'Slaughtering'";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 
 }

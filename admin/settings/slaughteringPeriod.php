@@ -1,3 +1,17 @@
+<?php
+require_once '../core/Database.php';
+require_once '../core/settingsController.php';
+
+if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+    header('Location: index.php');
+    exit();
+}
+
+$cleanings = (new settingsController())->getSlaughteringPeriod();
+$success = '';
+$error = '';
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -49,6 +63,17 @@
         </div>
 
         <section class="section">
+            <?php
+            if (isset($_SESSION['error'])) {
+                echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
+                unset($_SESSION['error']);
+            }
+
+            if (isset($_SESSION['success'])) {
+                echo '<div class="alert alert-success" role="alert">' . $_SESSION['success'] . '</div>';
+                unset($_SESSION['success']);
+            }
+            ?>
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card">
@@ -61,6 +86,24 @@
                                     <th scope="col">Period</th>
                                     <th scope="col">Actions</th>
                                 </thead>
+                                <tbody>
+                                    <?php if (!empty($cleanings)) : ?>
+                                        <?php foreach ($cleanings as $cleaning) : ?>
+                                            <tr>
+                                                <td><?= ($cleaning['schedTime']) ?></td>
+                                                <td>
+                                                    <a href="editCleaningPeriod.php?id=<?php echo $user['schedId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+                                                    <a href="deleteCleaningPeriod.php?id=<?php echo $user['schedId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                </td>
+                                            <tr>
+
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="5">No Cleaning Period found.</td>
+                                            </tr>
+                                        <?php endif; ?>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -74,16 +117,16 @@
                             <form action="addSlaughteringPeriod.php" method="post">
                                 <div class="mb-3">
                                     <label for="slaughteringPeriod" class="form-label">Slaughtering Period</label>
-                                    <select name="slaughteringPeriod" id="slaughteringPeriod" class="form-control">
+                                    <select name="schedTime" id="slaughteringPeriod" class="form-control">
                                         <option value="" disabled selected>Select the slaughtering period</option>
-                                        <option value="5.5">5 months 2 weeks</option>
-                                        <option value="5.6">5 months 3 weeks</option>
-                                        <option value="5.7">5 months 4 weeks (6 months)</option>
-                                        <option value="6.0">6 months</option>
-                                        <option value="6.1">6 months 1 week</option>
-                                        <option value="6.2">6 months 2 weeks</option>
-                                        <option value="6.3">6 months 3 weeks</option>
-                                        <option value="6.4">6 months 4 weeks (7 months)</option>
+                                        <option value="5 months 2 weeks">5 months 2 weeks</option>
+                                        <option value="5 months 3 weeks">5 months 3 weeks</option>
+                                        <option value="5 months 4 weeks (6 months)">5 months 4 weeks (6 months)</option>
+                                        <option value="6 months">6 months</option>
+                                        <option value="6 months 1 week">6 months 1 week</option>
+                                        <option value="6 months 2 weeks">6 months 2 weeks</option>
+                                        <option value="6 months 3 weeks">6 months 3 weeks</option>
+                                        <option value="6 months 4 weeks (7 months)">6 months 4 weeks (7 months)</option>
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Submit</button>

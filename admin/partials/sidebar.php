@@ -22,7 +22,7 @@ $is_settings_active = in_array($current_page, $settings_pages);
 <aside id="sidebar" class="sidebar">
     <div class="sidebar-logo">
         <a href="<?php echo $base_url; ?>" class="logo">
-            <img src="<?php echo $base_url; ?>assets/img/pig-logo.png">
+            <img src="<?php echo $base_url; ?>assets/img/pig-logo.png" style="width: 100px;">
         </a>
         <div class="welcome-message">
             <p>Welcome, <?= isset($_SESSION['u']) ? htmlspecialchars($_SESSION['u']) : 'Guest'; ?></p>
