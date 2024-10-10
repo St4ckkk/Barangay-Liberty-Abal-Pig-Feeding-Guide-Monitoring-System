@@ -14,7 +14,7 @@ class settingsController
         $this->db = $database->getConnection();
     }
 
-    public function addFeedingTime($schedTime, $schedType)
+    public function addSched($schedTime, $schedType)
     {
         $query = "INSERT INTO schedule (schedTime, schedType) VALUES (:schedTime, :schedType)";
         $params = [
@@ -33,4 +33,14 @@ class settingsController
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    public function getCleaningPeriod()
+    {
+        $query = "SELECT * FROM schedule WHERE schedType = 'Cleaning'";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+
 }

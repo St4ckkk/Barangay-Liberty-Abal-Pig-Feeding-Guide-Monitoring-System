@@ -1,3 +1,18 @@
+<?php
+require_once '../core/Database.php';
+require_once '../core/inventoryController.php';
+
+if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+    header('Location: index.php');
+    exit();
+}
+
+$inventories = (new inventoryController())->getFeedStocks();
+$success = '';
+$error = '';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,7 +63,18 @@
             </nav>
         </div>
 
-        <section class="section dashboard">
+        <section class="section">
+            <?php
+            if (isset($_SESSION['error'])) {
+                echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
+                unset($_SESSION['error']);
+            }
+
+            if (isset($_SESSION['success'])) {
+                echo '<div class="alert alert-success" role="alert">' . $_SESSION['success'] . '</div>';
+                unset($_SESSION['success']);
+            }
+            ?>
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card">
@@ -63,10 +89,26 @@
                                     <th scope="col">Qty of Food Per Sack</th>
                                     <th scope="col">Actions</th>
                                 </thead>
+                                <tbody>
+                                    <?php if (!empty($inventories)) : ?>
+                                        <?php foreach ($inventories as $inventory) : ?>
+                                            <tr>
+                                                <td><?= $inventory['feedsName'] ?></td>
+                                                <td><?= $inventory['feedsDescription'] ?></td>
+                                                <td><?= $inventory['QtyOFoodPerSack'] ?></td>
+                                                <td>
+                                                    <a href="editFeeds.php?id=<?= $inventory['id'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+                                                    <a href="deleteFeeds.php?id=<?= $inventory['id'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="5">No Feeds Stocks.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
                             </table>
-                            <tbody>
-                                
-                            </tbody>
                         </div>
                     </div>
                 </div>
@@ -77,7 +119,7 @@
                             <i class="bi bi-plus-circle"></i> Add Feeds
                         </div>
                         <div class="card-body">
-                            <form action="" method="POST">
+                            <form action="addFeeds.php" method="POST">
                                 <div class="mb-3">
                                     <label for="feedName" class="form-label">Feed Name</label>
                                     <input type="text" class="form-control" id="feedName" name="feedName" placeholder="Enter Feed Name" required>
@@ -88,7 +130,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="quantityPerSack" class="form-label">Quantity Per Sack</label>
-                                    <input type="number" class="form-control" id="quantityPerSack" name="quantityPerSack" placeholder="Enter Quantity" required>
+                                    <input type="number" class="form-control" id="quantityPerSack" name="QtyOFoodPerSack" placeholder="Enter Quantity" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Submit</button>
                             </form>

@@ -88,7 +88,6 @@ $error = '';
                                     <th scope="col">Time</th>
                                     <th scope="col">Action</th>
                                 </thead>
-
                                 <tbody>
                                     <?php if (!empty($feedings)) : ?>
                                         <?php foreach ($feedings as $feeding) : ?>

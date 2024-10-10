@@ -1,3 +1,18 @@
+<?php
+require_once '../core/Database.php';
+require_once '../core/inventoryController.php';
+
+if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+    header('Location: index.php');
+    exit();
+}
+
+$inventories = (new inventoryController())->getPigPens();
+$success = '';
+$error = '';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +20,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Pigs</title>
+    <title>Pigs Pens</title>
     <meta content="Dashboard for pig feeding guide and monitoring" name="description">
     <meta content="pig, feeding, monitoring, dashboard" name="keywords">
 
@@ -38,17 +53,28 @@
 
     <main id="main" class="main" style="margin-top: 100px;">
         <div class="pagetitle">
-            <h1>Pen Pigs</h1>
+            <h1>Pig Pens</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                     <li class="breadcrumb-item">Inventory</li>
-                    <li class="breadcrumb-item active">Pigs</li>
+                    <li class="breadcrumb-item active">Pens</li>
                 </ol>
             </nav>
         </div>
 
         <section class="section">
+            <?php
+            if (isset($_SESSION['error'])) {
+                echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
+                unset($_SESSION['error']);
+            }
+
+            if (isset($_SESSION['success'])) {
+                echo '<div class="alert alert-success" role="alert">' . $_SESSION['success'] . '</div>';
+                unset($_SESSION['success']);
+            }
+            ?>
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card">
@@ -63,26 +89,43 @@
                                     <th scope="col">Pen Status</th>
                                     <th scope="col">Actions</th>
                                 </thead>
+                                <tbody>
+                                    <?php if (!empty($inventories)) : ?>
+                                        <?php foreach ($inventories as $inventory) : ?>
+                                            <tr>
+                                                <td><?= $inventory['penno'] ?></td>
+                                                <td><?= $inventory['pigcount'] ?></td>
+                                                <td><?= $inventory['penstatus'] ?></td>
+                                                <td>
+                                                    <a href="editPigPen.php?id=<?= $inventory['penId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+                                                    <a href="deletePigPen.php?id=<?= $inventory['penId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="5">No Feeds Stocks.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
                             </table>
-                            <tbody>
-                            </tbody>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="card">
                         <div class="card-header mb-2">
-                            <i class="bi bi-plus-circle"></i> Add Feeds
+                            <i class="bi bi-plus-circle"></i> Add Pig Pens
                         </div>
                         <div class="card-body">
-                            <form action="addPen.php" method="post">
+                            <form action="addPigPen.php" method="post">
                                 <div class="mb-3">
                                     <label for="feedName" class="form-label">Pen #</label>
-                                    <input type="number" class="form-control" id="feedName" name="penno" placeholder="Enter Pen number" required>
+                                    <input type="text" class="form-control" id="feedName" name="penno" placeholder="Enter Pen number" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="feedDescription" class="form-label">Pig Count</label>
-                                   <input type="number" name="penpigcount" id="" class="form-control">
+                                    <input type="number" name="penpigcount" id="" class="form-control">
                                 </div>
                                 <div class="mb-3">
                                     <label for="quantityPerSack" class="form-label">Pen Status</label>

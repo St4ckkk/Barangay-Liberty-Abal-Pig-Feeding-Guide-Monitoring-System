@@ -1,5 +1,5 @@
 <?php
-session_start(); 
+// session_start(); 
 require_once '../core/settingsController.php';
 
 $settingsController = new settingsController();
@@ -13,15 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($schedTime)) {
         $error = "All fields are required!";
     } else {
-        $schedType = 'Feeding';
+        $schedType = 'Cleaning';
         $result = $settingsController->addSched($schedTime, $schedType);
 
         if ($result) {
-            $_SESSION['success'] = 'Feeding Time Successfully Added!';
+            $_SESSION['success'] = 'Cleaning Period Successfully Added!';
         } else {
-            $_SESSION['error'] = "Failed to add Feeding Time";
+            $_SESSION['error'] = "Failed to add Cleaning Period";
         }
-        header('Location: feedingTime.php');
+        header('Location: cleaningPeriod.php');
         exit();
     }
 }
