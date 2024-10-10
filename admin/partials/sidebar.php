@@ -11,7 +11,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 $guidelines_pages = ['feeding-guidelines.php', 'health-guidelines.php', 'pigs-guidelines.php', 'disinfection-guidelines.php'];
 $is_guidelines_active = in_array($current_page, $guidelines_pages);
 
-$inventory_pages = ['feedStocks.php', 'vitStocks.php', 'pigs.php', 'sow.php'];
+$inventory_pages = ['feedStocks.php', 'vitStocks.php', 'pen.php', 'sow.php', 'pigs.php'];
 $is_inventory_active = in_array($current_page, $inventory_pages);
 
 $settings_pages = ['feedingTime.php', 'biv.php', 'cleaningPeriod.php', 'harvestTime.php', 'slaughteringPeriod.php', 'farrowingPeriod.php'];
@@ -97,7 +97,7 @@ $is_settings_active = in_array($current_page, $settings_pages);
                     </a>
                 </li>
                 <li>
-                    <a href="<?php echo $base_url_inventory; ?>pigs.php" class="<?php echo ($current_page == 'pigs.php') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_url_inventory; ?>pen.php" class="<?php echo ($current_page == 'pen.php') ? 'active' : ''; ?>">
                         <span>Pig Pen</span>
                     </a>
                 </li>

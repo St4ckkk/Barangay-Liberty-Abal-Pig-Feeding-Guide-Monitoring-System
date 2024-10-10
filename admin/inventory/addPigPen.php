@@ -22,6 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $_SESSION['error'] = "Failed to add Pig Pen";
     }
-    header('Location: pigs.php');
+    header('Location: pen.php');
     exit();
 }
