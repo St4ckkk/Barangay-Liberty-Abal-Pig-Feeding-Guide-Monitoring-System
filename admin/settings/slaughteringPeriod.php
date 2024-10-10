@@ -96,7 +96,6 @@ $error = '';
                                                     <a href="deleteCleaningPeriod.php?id=<?php echo $user['schedId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                                                 </td>
                                             <tr>
-
                                             <?php endforeach; ?>
                                         <?php else: ?>
                                             <tr>

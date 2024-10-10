@@ -49,4 +49,11 @@ class settingsController
         return $stmt->fetchAll();
     }
 
+    public function getFarrowingPeriods() {
+        $query = "SELECT * FROM farrowing_monitoring";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
 }

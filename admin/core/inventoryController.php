@@ -52,4 +52,31 @@ class inventoryController
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+
+    public function addSows($sowId, $penId, $breed, $birthdate, $weight, $acquisitionDate, $status) {
+        $query = "INSERT INTO sows (sow_id, penId, breed, birth_date, weight_kg, acquisition_date, status) VALUES (:sow_id, :penId, :breed, :birth_date, :weight_kg, :acquisition_date, :status)";
+        $params = [
+            ':sow_id' => $sowId,
+            ':penId' => $penId,
+            ':breed' => $breed,
+            ':birth_date' => $birthdate,    
+            ':weight_kg' => $weight,
+            ':acquisition_date' => $acquisitionDate,
+            ':status' => $status
+        ];
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
+    }
+    public function getSows()
+    {
+        $query = "
+            SELECT sows.*, pigpen.penno 
+            FROM sows 
+            JOIN pigpen ON sows.penId = pigpen.penId
+        ";
+        $stmt  = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

@@ -136,7 +136,6 @@ $error = '';
                                         <label for="breed" class="form-label">Description</label>
                                         <textarea name="description" id="" class="form-control"></textarea>
                                     </div>
-
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Save</button>
                             </form>

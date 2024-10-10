@@ -11,11 +11,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
 $guidelines_pages = ['feeding-guidelines.php', 'health-guidelines.php', 'pigs-guidelines.php', 'disinfection-guidelines.php'];
 $is_guidelines_active = in_array($current_page, $guidelines_pages);
 
-$inventory_pages = ['feedStocks.php', 'vitStocks.php', 'pigs.php'];
+$inventory_pages = ['feedStocks.php', 'vitStocks.php', 'pigs.php', 'sow.php'];
 $is_inventory_active = in_array($current_page, $inventory_pages);
 
-$settings_pages = ['feedingTime.php', 'biv.php', 'cleaningPeriod.php', 'harvestTime.php', 'slaughteringPeriod.php'];
-$is_settings_active = in_array($current_page, $settings_pages);
+$settings_pages = ['feedingTime.php', 'biv.php', 'cleaningPeriod.php', 'harvestTime.php', 'slaughteringPeriod.php', 'farrowingPeriod.php'];
+$is_settings_active = in_array($current_page, $settings_pages); 
 ?>
 
 <!-- ======= Sidebar ======= -->
@@ -101,6 +101,12 @@ $is_settings_active = in_array($current_page, $settings_pages);
                         <span>Pig Pen</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="<?php echo $base_url_inventory; ?>sow.php" class="<?php echo ($current_page == 'sow.php') ? 'active' : ''; ?>">
+                        <span>Sows</span>
+                    </a>
+                </li>
             </ul>
         </li>
 
@@ -128,6 +134,12 @@ $is_settings_active = in_array($current_page, $settings_pages);
                 <li>
                     <a href="<?php echo $base_url_settings; ?>slaughteringPeriod.php" class="<?php echo ($current_page == 'slaughteringPeriod.php') ? 'active' : ''; ?>">
                         <span>Slaughtering Period</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="<?php echo $base_url_settings; ?>farrowingPeriod.php" class="<?php echo ($current_page == 'farrowingPeriod.php') ? 'active' : ''; ?>">
+                        <span>Farrowing Period</span>
                     </a>
                 </li>
             </ul>
