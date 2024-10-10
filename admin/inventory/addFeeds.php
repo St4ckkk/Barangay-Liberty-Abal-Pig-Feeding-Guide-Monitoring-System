@@ -12,15 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $feedsDescription = $_POST['feedDescription'] ?? null;
     $feedsCost = $_POST['feedCost'] ?? null;
     $QtyOFoodPerSack = $_POST['QtyOFoodPerSack'] ?? null;
+    $purchasedDate = $_POST['purchased-date'] ?? null;
     $expenseType = "Feeds";
 
     if (empty($feedsName) || empty($feedsDescription) || empty($QtyOFoodPerSack)) {
         $_SESSION['error'] = "All fields are required!";
     } else {
-        $result = $inventory->addFeedStocks($feedsName, $feedsDescription, $feedsCost, $QtyOFoodPerSack);
+        $result = $inventory->addFeedStocks($feedsName, $feedsDescription, $feedsCost, $purchasedDate, $QtyOFoodPerSack);
 
         if ($result) {
-            $expenseAdded = $inventory->addExpense($feedsName, $expenseType, $feedsCost);
+            $expenseAdded = $inventory->addExpense($feedsName, $expenseType, $feedsCost, $purchasedDate);
 
             if ($expenseAdded) {
                 $_SESSION['success'] = "Feeds created and expense added successfully!";

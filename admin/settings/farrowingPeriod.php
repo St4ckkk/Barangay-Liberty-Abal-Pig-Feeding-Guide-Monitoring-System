@@ -1,18 +1,14 @@
 <?php
-require_once '../core/Database.php';
+
 require_once '../core/settingsController.php';
 
-if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
-    header('Location: index.php');
-    exit();
-}
+$settingsController = new settingsController();
 
-// Fetch the farrowing data from the database
-$farrowingPeriods = (new settingsController())->getFarrowingPeriods();
-$success = '';
-$error = '';
-
+$farrowingPeriods = $settingsController->getFarrowingPeriods();
+$pigpen = $settingsController->getPigPens();
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -61,15 +57,21 @@ $error = '';
             }
             ?>
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header mb-2">
                             <span>Farrowing Periods</span>
                         </div>
                         <div class="card-body">
+                            <div class="float-end">
+                                <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addFarrowingPeriodModal">
+                                    Add <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
                             <table class="table table-bordered">
                                 <thead>
-                                    <th scope="col">Sow ID</th>
+                                    <th scope="col">Pen #</th>
+                                    <th scope="col">ETN</th>
                                     <th scope="col">Breeding Date</th>
                                     <th scope="col">Expected Farrowing Date</th>
                                     <th scope="col">Actual Farrowing Date</th>
@@ -89,44 +91,15 @@ $error = '';
                                                     <a href="editFarrowingPeriod.php?id=<?= htmlspecialchars($period['id']) ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
                                                     <a href="deleteFarrowingPeriod.php?id=<?= htmlspecialchars($period['id']) ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                                                 </td>
-                                            <tr>
-                                            <?php endforeach; ?>
-                                        <?php else : ?>
-                                            <tr>
-                                                <td colspan="6">No Farrowing Periods found.</td>
                                             </tr>
-                                        <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    <?php else : ?>
+                                        <tr>
+                                            <td colspan="6">No Farrowing Periods found.</td>
+                                        </tr>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-header mb-2">
-                            <i class="bi bi-plus-circle"></i> Add Farrowing Period
-                        </div>
-                        <div class="card-body">
-                            <form action="addFarrowingPeriod.php" method="post">
-                                <div class="mb-3">
-                                    <label for="sow_id" class="form-label">Sow ID</label>
-                                    <input type="text" class="form-control" name="sow_id" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="breeding_date" class="form-label">Breeding Date</label>
-                                    <input type="date" class="form-control" name="breeding_date" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="expected_farrowing_date" class="form-label">Expected Farrowing Date</label>
-                                    <input type="date" class="form-control" name="expected_farrowing_date" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="litter_size" class="form-label">Litter Size</label>
-                                    <input type="number" class="form-control" name="litter_size">
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">Submit</button>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -134,10 +107,87 @@ $error = '';
         </section>
     </main>
 
+    <!-- Add Farrowing Period Modal -->
+    <div class="modal fade" id="addFarrowingPeriodModal" tabindex="-1" aria-labelledby="addFarrowingPeriodModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFarrowingPeriodModalLabel">Add Farrowing Period</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="addFarrowingPeriod.php" method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="penno" class="form-label">Pen no</label>
+                                <select name="penno" id="penno" class="form-control">
+                                    <option value="" disabled selected>Select Pen</option>
+                                    <?php foreach ($pigpen as $pen) : ?>
+                                        <option value="<?= $pen['penId'] ?>"><?= $pen['penno'] ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="pigs" class="form-label">Pigs</label>
+                                <select name="pigs" id="pigsSelect" class="form-control" disabled>
+                                    <option value="" disabled selected>Select Pig</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="breeding_date" class="form-label">Breeding Date</label>
+                                <input type="date" class="form-control" name="breeding_date" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expected_farrowing_date" class="form-label">Expected Farrowing Date</label>
+                                <input type="date" class="form-control" name="expected_farrowing_date" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="litter_size" class="form-label">Litter Size</label>
+                                <input type="number" class="form-control" name="litter_size">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const penSelect = document.getElementById('penno');
+            const pigsSelect = document.getElementById('pigsSelect');
+
+            penSelect.addEventListener('change', function() {
+                const selectedPenId = this.value;
+
+                if (selectedPenId) {
+                    fetch(`fetchParrowingPigs.php?pen_id=${selectedPenId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            pigsSelect.innerHTML = '<option value="" disabled selected>Select Pig</option>';
+                            data.forEach(pig => {
+                                const option = document.createElement('option');
+                                option.value = pig.pig_id;
+                                option.textContent = `${pig.ear_tag_number} - ${pig.breed}`;
+                                pigsSelect.appendChild(option);
+                            });
+                            pigsSelect.disabled = false;
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    pigsSelect.innerHTML = '<option value="" disabled selected>Select Pig</option>';
+                    pigsSelect.disabled = true;
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

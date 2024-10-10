@@ -4,6 +4,7 @@ $base_url2 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/g
 $base_url_inventory = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/inventory/';
 $base_url_settings = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/settings/';
 $base_url_user = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/user/';
+$base_url_expense = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/expense/';
 
 $current_page = basename($_SERVER['PHP_SELF']);
 
@@ -15,7 +16,9 @@ $inventory_pages = ['feedStocks.php', 'vitStocks.php', 'pen.php', 'sow.php', 'pi
 $is_inventory_active = in_array($current_page, $inventory_pages);
 
 $settings_pages = ['feedingTime.php', 'biv.php', 'cleaningPeriod.php', 'harvestTime.php', 'slaughteringPeriod.php', 'farrowingPeriod.php'];
-$is_settings_active = in_array($current_page, $settings_pages); 
+$is_settings_active = in_array($current_page, $settings_pages);
+
+
 ?>
 
 <!-- ======= Sidebar ======= -->
@@ -143,6 +146,13 @@ $is_settings_active = in_array($current_page, $settings_pages);
                     </a>
                 </li>
             </ul>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link <?php echo ($current_page == 'expense.php') ? 'active' : ''; ?>" href="<?php echo $base_url_expense; ?>expense.php">
+                <i class="bi bi-cash-stack"></i>
+                <span>Manage Expense</span>
+            </a>
         </li>
 
     </ul>

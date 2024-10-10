@@ -119,7 +119,7 @@ class settingsController
     }
     public function getPigsByPen($penId)
     {
-        $query = "SELECT * FROM pigs WHERE penId = :penId";
+        $query = "SELECT * FROM pigs WHERE penId = :penId AND status = 'ready for slaughter' AND health_status = 'healthy'";
         $params = [':penId' => $penId];
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);
@@ -138,5 +138,47 @@ class settingsController
 
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
+    }
+
+    public function getFarrowing()
+    {
+        $query = "
+        SELECT 
+            sows.sow_id,
+            pigpen.penno,
+            pigs.ear_tag_number
+        FROM 
+            farrowing_monitoring
+        JOIN 
+            sows ON farrowing_monitoring.sow_id = sows.sow_id
+        JOIN 
+            pigs ON sows.pigId = pigs.pig_id
+        JOIN 
+            pigpen ON sows.penId = pigpen.penId
+    ";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function getPigPens()
+    {
+        $query = "SELECT * FROM pigpen";
+        $stmt  = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    public function getFarrowingPigs($penId)
+    {
+        $query = "
+        SELECT pigs.pig_id, pigs.ear_tag_number, pigs.breed 
+        FROM pigs
+        JOIN sows ON pigs.pig_id = sows.pigId
+        WHERE pigs.penId = :penId 
+        AND sows.status = 'Active'
+    ";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([':penId' => $penId]);
+        return $stmt->fetchAll();
     }
 }

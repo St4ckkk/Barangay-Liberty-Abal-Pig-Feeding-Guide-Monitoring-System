@@ -12,14 +12,15 @@ class inventoryController
         $this->db = $database->getConnection();
     }
 
-    public function addFeedStocks($feedsName, $feedsDescription, $feedsCost, $QtyOFoodPerSack,)
+    public function addFeedStocks($feedsName, $feedsDescription, $feedsCost, $purchasedDate, $QtyOFoodPerSack)
     {
-        $query = "INSERT INTO feedstock (feedsName, feedsDescription, feedsCost, QtyOFoodPerSack) VALUES (:feedsName, :feedsDescription,  :feedsCost, :QtyOFoodPerSack)";
+        $query = "INSERT INTO feedstock (feedsName, feedsDescription, feedsCost, feed_purchase_date, QtyOFoodPerSack) VALUES (:feedsName, :feedsDescription,  :feedsCost, :feed_purchase_date, :QtyOFoodPerSack)";
 
         $params = [
             ':feedsName' => $feedsName,
             ':feedsDescription' => $feedsDescription,
             ':feedsCost' => $feedsCost,
+            ':feed_purchase_date' => $purchasedDate,
             ':QtyOFoodPerSack' => $QtyOFoodPerSack
         ];
         $stmt = $this->db->prepare($query);
@@ -35,14 +36,15 @@ class inventoryController
     }
 
 
-    public function addExpense($expenseName, $expenseType, $total)
+    public function addExpense($expenseName, $expenseType, $total, $expenseDate)
     {
-        $query = "INSERT INTO expense (expenseName , expenseType, total) VALUES (:expenseName, :expenseType, :total)";
+        $query = "INSERT INTO expense (expenseName , expenseType, total, expenseDate) VALUES (:expenseName, :expenseType, :total, :expenseDate)";
 
         $params = [
             ':expenseName' => $expenseName,
             ':expenseType' => $expenseType,
-            ':total' => $total
+            ':total' => $total,
+            ':expenseDate' => $expenseDate
         ];
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
@@ -69,16 +71,12 @@ class inventoryController
     }
 
 
-    public function addSows($sowId, $penId, $breed, $birthdate, $weight, $acquisitionDate, $status)
+    public function addSows($penId, $pigs, $status)
     {
-        $query = "INSERT INTO sows (sow_id, penId, breed, birth_date, weight_kg, acquisition_date, status) VALUES (:sow_id, :penId, :breed, :birth_date, :weight_kg, :acquisition_date, :status)";
+        $query = "INSERT INTO sows (penId, pigId, status) VALUES (:penId, :pigId, :status)";
         $params = [
-            ':sow_id' => $sowId,
             ':penId' => $penId,
-            ':breed' => $breed,
-            ':birth_date' => $birthdate,
-            ':weight_kg' => $weight,
-            ':acquisition_date' => $acquisitionDate,
+            ':pigId' => $pigs,
             ':status' => $status
         ];
         $stmt = $this->db->prepare($query);
@@ -87,14 +85,16 @@ class inventoryController
     public function getSows()
     {
         $query = "
-            SELECT sows.*, pigpen.penno 
-            FROM sows 
-            JOIN pigpen ON sows.penId = pigpen.penId
-        ";
+        SELECT sows.*, pigpen.penno, pigs.ear_tag_number, pigs.weight, pigs.acquisition_date, pigs.age, pigs.breed
+        FROM sows
+        JOIN pigpen ON sows.penId = pigpen.penId
+        JOIN pigs ON sows.pigId = pigs.pig_id
+    ";
         $stmt  = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
 
     public function getPigs($penId)
     {
@@ -189,6 +189,24 @@ class inventoryController
         $stmt->execute([':pig_id' => $pigId]);
         return $stmt->fetchColumn();
     }
+
+    public function getPigsByPen($penId)
+    {
+        $query = "
+        SELECT pig_id, ear_tag_number, breed 
+        FROM pigs 
+        WHERE penId = :penId 
+        AND gender = 'female' 
+        AND status IN ('ready for breeding', 'in breeding')
+        AND health_status = 'healthy'
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([':penId' => $penId]);
+        return $stmt->fetchAll();
+    }
+
+
+
 
 
     public function increasePenCapacity($penId)

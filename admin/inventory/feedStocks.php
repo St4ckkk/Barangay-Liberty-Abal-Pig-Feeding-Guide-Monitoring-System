@@ -10,7 +10,6 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
 $inventories = (new inventoryController())->getFeedStocks();
 $success = '';
 $error = '';
-
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +40,9 @@ $error = '';
     <link href="../assets/css/style.css" rel="stylesheet">
 
     <style>
-
+        .table td {
+            font-size: 12px;
+        }
     </style>
 </head>
 
@@ -76,18 +77,24 @@ $error = '';
             }
             ?>
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header mb-2">
                             Feeds Stocks
                         </div>
                         <div class="card-body">
+                            <div class="float-end">
+                                <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addFeedModal">
+                                    Add <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
                             <table class="table table-bordered">
                                 <thead>
                                     <th scope="col">Feeds Name</th>
-                                    <th scope="col">Feeds Description</th>
                                     <th scope="col">Qty of Food Per Sack</th>
                                     <th scope="col">Feeds Cost</th>
+                                    <th scope="col">Purchased Date</th>
+                                    <th scope="col">Feeds Description</th>
                                     <th scope="col">Actions</th>
                                 </thead>
                                 <tbody>
@@ -95,9 +102,10 @@ $error = '';
                                         <?php foreach ($inventories as $inventory) : ?>
                                             <tr>
                                                 <td><?= $inventory['feedsName'] ?></td>
-                                                <td><?= $inventory['feedsDescription'] ?></td>
                                                 <td><?= $inventory['QtyOFoodPerSack'] ?></td>
                                                 <td><?= $inventory['feedsCost'] ?></td>
+                                                <td><?= $inventory['feed_purchase_date'] ?></td>
+                                                <td><?= $inventory['feedsDescription'] ?></td>
                                                 <td>
                                                     <a href="editFeeds.php?id=<?= $inventory['id'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
                                                     <a href="deleteFeeds.php?id=<?= $inventory['id'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
@@ -106,7 +114,7 @@ $error = '';
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="5">No Feeds Stocks.</td>
+                                            <td colspan="6">No Feeds Stocks.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -116,43 +124,57 @@ $error = '';
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-header mb-2">
-                            <i class="bi bi-plus-circle"></i> Add Feeds
-                        </div>
-                        <div class="card-body">
-                            <form action="addFeeds.php" method="POST">
-                                <div class="mb-3">
-                                    <label for="feedName" class="form-label">Feed Name</label>
-                                    <input type="text" class="form-control" id="feedName" name="feedName" placeholder="Enter Feed Name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="quantityPerSack" class="form-label">Quantity Per Sack</label>
-                                    <input type="number" class="form-control" id="quantityPerSack" name="QtyOFoodPerSack" placeholder="Enter Quantity" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="feedCost" class="form-label">Feed Cost</label>
-                                    <input type="number" class="form-control" id="feedCost" name="feedCost" placeholder="Enter Feed Cost" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="feedDescription" class="form-label">Feed Description</label>
-                                    <textarea class="form-control" id="feedDescription" name="feedDescription" rows="3" placeholder="Enter Feed Description" required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">Submit</button>
-                            </form>
-                        </div>
-                    </div>
+                    <!-- Removed the add feeds card, now it's a modal -->
                 </div>
             </div>
-            </div>
-
-
         </section>
-
     </main>
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <!-- Modal for Adding Feeds -->
+    <div class="modal fade" id="addFeedModal" tabindex="-1" aria-labelledby="addFeedModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFeedModalLabel">Add Feeds</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="addFeeds.php" method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="feedName" class="form-label">Feed Name</label>
+                                <input type="text" class="form-control" id="feedName" name="feedName" placeholder="Enter Feed Name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="quantityPerSack" class="form-label">Quantity Per Sack</label>
+                                <input type="number" class="form-control" id="quantityPerSack" name="QtyOFoodPerSack" placeholder="Enter Quantity" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="feedCost" class="form-label">Feeds Cost</label>
+                                <input type="number" class="form-control" id="feedCost" name="feedCost" placeholder="Enter Feed Cost" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="feedCost" class="form-label">Purchased Date</label>
+                                <input type="date" name="purchased-date" id="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
 
+                            <div class="mb-3">
+                                <label for="feedDescription" class="form-label">Feed Description</label>
+                                <textarea class="form-control" id="feedDescription" name="feedDescription" rows="3" placeholder="Enter Feed Description" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
     <script src="../assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
