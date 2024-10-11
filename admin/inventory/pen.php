@@ -41,7 +41,7 @@ $error = '';
     <link href="../assets/vendor/quill/quill.bubble.css" rel="stylesheet">
     <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="../assets/vendor/simple-datatables/style.css" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="../assets/css/global.css" rel="stylesheet">
 
     <style>
         .pen-grid {
@@ -129,6 +129,12 @@ $error = '';
         .btn-delete:hover {
             background-color: #da190b;
         }
+
+        .btn {
+            width: 60px;
+            padding: 2px;
+            font-size: 12px;
+        }
     </style>
 </head>
 
@@ -205,7 +211,7 @@ $error = '';
                                     <input type="text" class="form-control" id="feedName" name="penno" placeholder="Enter Pen number" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="feedDescription" class="form-label">Pig Count</label>
+                                    <label for="feedDescription" class="form-label">Capacity</label>
                                     <input type="number" name="penpigcount" id="" class="form-control">
                                 </div>
                                 <div class="mb-3">

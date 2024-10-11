@@ -49,6 +49,18 @@ $error = '';
 
     <link href="../assets/css/style.css" rel="stylesheet">
 </head>
+<style>
+    .btn {
+        width: 60px;
+        padding: 2px;
+        font-size: 12px;
+    }
+
+    .custom-btn {
+        width: 150px;
+        padding: 5px;
+    }
+</style>
 
 <body>
     <?php
@@ -87,42 +99,72 @@ $error = '';
                             <span>Expenses</span>
                         </div>
                         <div class="card-body">
-                            <div class="float-end">
-                                <a href="expense_report.php" class="btn btn-primary float-end mb-3">
-                                    Generate PDF Report <i class="bi bi-file-earmark-pdf"></i>
-                                </a>
-                            </div>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Expense Name</th>
-                                        <th scope="col">Expense Type</th>
-                                        <th scope="col">Expense Cost</th>
-                                        <th scope="col">Expense Date</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (!empty($expenses)) : ?>
-                                        <?php foreach ($expenses as $expense) : ?>
+                            <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+                                <div class="datatable-top">
+                                    <div class="datatable-dropdown">
+                                        <div class="float-end">
+                                            <a href="expense_report.php" class="custom-btn btn btn-primary float-end mb-3 ">
+                                                Generate PDF Report <i class="bi bi-file-earmark-pdf"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="datatable-search">
+                                        <input class="datatable-input" placeholder="Search..." type="search" name="search" title="Search within table">
+                                    </div>
+                                </div>
+                                <div class="datatable-container">
+                                    <table class="table datatable datatable-table">
+                                        <thead>
                                             <tr>
-                                                <td><?= htmlspecialchars($expense['expenseName']) ?></td>
-                                                <td><?= htmlspecialchars($expense['expenseType']) ?></td>
-                                                <td>₱<?= number_format($expense['total'], 2) ?></td>
-                                                <td><?= date('M d, Y', strtotime($expense['expenseDate'])) ?></td>
-                                                <td>
-                                                    <a href="editDisinfectionGuidelines.php?id=<?= $expense['expenseId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
-                                                    <a href="deleteDisinfectionGuidelines.php?id=<?= $expense['expenseId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
-                                                </td>
+                                                <th data-sortable="true">Item Name</th>
+                                                <th data-sortable="true">Item Type</th>
+                                                <th data-sortable="true">Total Cost</th>
+                                                <th data-sortable="true">Purchase Date</th>
+
+                                                <th>Action</th>
                                             </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="5">No expenses found.</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (!empty($expenses)) : ?>
+                                                <?php foreach ($expenses as $expense) : ?>
+                                                    <tr>
+                                                        <td><?= htmlspecialchars($expense['expenseName']) ?></td>
+                                                        <td><?= htmlspecialchars($expense['expenseType']) ?></td>
+                                                        <td>₱<?= number_format($expense['total'], 2) ?></td>
+                                                        <td><?= date('M d, Y', strtotime($expense['expenseDate'])) ?></td>
+                                                        <td>
+                                                            <a href="editDisinfectionGuidelines.php?id=<?= $expense['expenseId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+                                                            <a href="deleteDisinfectionGuidelines.php?id=<?= $expense['expenseId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="5">No expenses found.</td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="datatable-bottom">
+                                    <div class="datatable-info">Showing 1 to 10 of 100 entries</div>
+                                    <nav class="datatable-pagination">
+                                        <ul class="datatable-pagination-list">
+                                            <li class="datatable-pagination-list-item datatable-hidden datatable-disabled"><button data-page="1" class="datatable-pagination-list-item-link" aria-label="Page 1">‹</button></li>
+                                            <li class="datatable-pagination-list-item datatable-active"><button data-page="1" class="datatable-pagination-list-item-link" aria-label="Page 1">1</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="2" class="datatable-pagination-list-item-link" aria-label="Page 2">2</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="3" class="datatable-pagination-list-item-link" aria-label="Page 3">3</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="4" class="datatable-pagination-list-item-link" aria-label="Page 4">4</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="5" class="datatable-pagination-list-item-link" aria-label="Page 5">5</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="6" class="datatable-pagination-list-item-link" aria-label="Page 6">6</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="7" class="datatable-pagination-list-item-link" aria-label="Page 7">7</button></li>
+                                            <li class="datatable-pagination-list-item datatable-ellipsis datatable-disabled"><button class="datatable-pagination-list-item-link">…</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="10" class="datatable-pagination-list-item-link" aria-label="Page 10">10</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="2" class="datatable-pagination-list-item-link" aria-label="Page 2">›</button></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

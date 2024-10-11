@@ -104,12 +104,6 @@ $is_settings_active = in_array($current_page, $settings_pages);
                         <span>Pig Pen</span>
                     </a>
                 </li>
-
-                <li>
-                    <a href="<?php echo $base_url_inventory; ?>sow.php" class="<?php echo ($current_page == 'sow.php') ? 'active' : ''; ?>">
-                        <span>Sows</span>
-                    </a>
-                </li>
             </ul>
         </li>
 
@@ -125,15 +119,16 @@ $is_settings_active = in_array($current_page, $settings_pages);
                     </a>
                 </li>
                 <li>
+                    <a href="<?php echo $base_url_settings; ?>cleaningPeriod.php" class="<?php echo ($current_page == 'cleaningPeriod.php') ? 'active' : ''; ?>">
+                        <span>Cleaning Time</span>
+                    </a>
+                </li>
+                <li>
                     <a href="<?php echo $base_url_settings; ?>biv.php" class="<?php echo ($current_page == 'biv.php') ? 'active' : ''; ?>">
                         <span>Boosting/Injections/Vitamins</span>
                     </a>
                 </li>
-                <li>
-                    <a href="<?php echo $base_url_settings; ?>cleaningPeriod.php" class="<?php echo ($current_page == 'cleaningPeriod.php') ? 'active' : ''; ?>">
-                        <span>Cleaning Period</span>
-                    </a>
-                </li>
+
                 <li>
                     <a href="<?php echo $base_url_settings; ?>slaughteringPeriod.php" class="<?php echo ($current_page == 'slaughteringPeriod.php') ? 'active' : ''; ?>">
                         <span>Slaughtering Period</span>

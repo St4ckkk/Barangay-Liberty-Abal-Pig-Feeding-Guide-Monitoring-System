@@ -45,7 +45,7 @@
     <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/global.css" rel="stylesheet">
     <style>
       .card-icon {
         font-size: 32px;

@@ -134,17 +134,26 @@ class inventoryController
 
 
 
-    public function addPigs($etn, $penId,  $status, $gender, $healthStatus, $breed, $acquisition_date, $weight, $age, $notes)
+    public function addPigs($etn, $penId, $status, $gender, $breed, $pigType, $weight, $age, $notes)
     {
-        $query = "INSERT INTO pigs (ear_tag_number, penId,  status, gender, health_status, breed, acquisition_date, weight, age, notes) VALUES (:ear_tag_number, :penId, :status , :gender, :health_status, :breed, :acquisition_date, :weight, :age, :notes)";
+        
+        $checkQuery = "SELECT COUNT(*) FROM pigs WHERE ear_tag_number = :ear_tag_number";
+        $checkStmt = $this->db->prepare($checkQuery);
+        $checkStmt->execute([':ear_tag_number' => $etn]);
+        $duplicateCount = $checkStmt->fetchColumn();
+
+        if ($duplicateCount > 0) {
+            return false; 
+        }
+
+        $query = "INSERT INTO pigs (ear_tag_number, penId, status, gender, breed, pig_type, weight, age, notes) VALUES (:ear_tag_number, :penId, :status, :gender, :breed, :pig_type, :weight, :age, :notes)";
         $params = [
             ':ear_tag_number' => $etn,
             ':penId' => $penId,
             ':status' => $status,
             ':gender' => $gender,
-            ':health_status' => $healthStatus,
             ':breed' => $breed,
-            ':acquisition_date' => $acquisition_date,
+            ':pig_type' => $pigType,
             ':weight' => $weight,
             ':age' => $age,
             ':notes' => $notes
@@ -152,6 +161,7 @@ class inventoryController
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
     }
+
 
     public function getPenCapacity($penId)
     {

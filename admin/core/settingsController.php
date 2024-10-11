@@ -14,6 +14,7 @@ class settingsController
         $this->db = $database->getConnection();
     }
 
+
     public function addSlaughteringSched($penId, $schedTime, $schedDate, $schedType)
     {
         $query = "INSERT INTO schedule (penId, schedTime, schedDate, schedType) VALUES (:penId, :schedTime, :schedDate, :schedType)";
@@ -123,16 +124,6 @@ class settingsController
         return $stmt->fetchAll();
     }
 
-
-
-
-    public function getFarrowingPeriods()
-    {
-        $query = "SELECT * FROM farrowing_monitoring";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
     public function getPigsByPen($penId)
     {
         $query = "SELECT * FROM pigs WHERE penId = :penId AND status = 'ready for slaughter' AND health_status = 'healthy'";
@@ -156,27 +147,6 @@ class settingsController
         return $stmt->execute($params);
     }
 
-    public function getFarrowing()
-    {
-        $query = "
-        SELECT 
-            sows.sow_id,
-            pigpen.penno,
-            pigs.ear_tag_number
-        FROM 
-            farrowing_monitoring
-        JOIN 
-            sows ON farrowing_monitoring.sow_id = sows.sow_id
-        JOIN 
-            pigs ON sows.pigId = pigs.pig_id
-        JOIN 
-            pigpen ON sows.penId = pigpen.penId
-    ";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
-
     public function getPigPens()
     {
         $query = "SELECT * FROM pigpen";
@@ -184,19 +154,69 @@ class settingsController
         $stmt->execute();
         return $stmt->fetchAll();
     }
-    public function getFarrowingPigs($penId)
+    public function getFarrowingPeriods()
     {
+        $query = "
+        SELECT 
+            p.pig_id AS pig_id,
+            p.ear_tag_number AS etn,
+            p.status AS pig_status,
+            f.breeding_date,
+            f.expected_farrowing_date,
+            f.actual_farrowing_date,
+            f.sire,
+            f.pregnancy_status,
+            f.health_status,
+            f.litter_size,
+            p.penId,
+            (SELECT penno FROM pigpen WHERE penId = p.penId) AS pen_number
+        FROM 
+            pigs p
+        JOIN 
+            farrowing f ON p.pig_id = f.pigId
+        WHERE 
+            p.status = 'ready for breeding'
+        ";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+
+    public function getFemaleDams($penId) {
         $query = "
         SELECT pigs.pig_id, pigs.ear_tag_number, pigs.breed 
         FROM pigs
-        JOIN sows ON pigs.pig_id = sows.pigId
         WHERE pigs.penId = :penId 
-        AND sows.status = 'Active'
-    ";
+        AND pigs.gender = 'female' 
+        AND pigs.status = 'ready for breeding'
+        ";
+    
         $stmt = $this->db->prepare($query);
         $stmt->execute([':penId' => $penId]);
         return $stmt->fetchAll();
     }
+    
+
+    public function getMaleSire()
+    {
+        $query = "
+        SELECT pig_id, ear_tag_number, breed 
+        FROM pigs
+        WHERE gender = 'male' 
+        AND status = 'ready for breeding'
+        ";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    
+
+
+
 
     public function getFeeds()
     {
@@ -218,7 +238,6 @@ class settingsController
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);
 
-        // Return true if rows were affected (means update succeeded)
         return $stmt->rowCount() > 0;
     }
 
@@ -247,4 +266,27 @@ class settingsController
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+
+    public function addFarrowingPeriod($pigId, $penId, $breeding_date, $expected_farrowing_date, $sire, $pregnancy_status, $health_status, $litter_size, $notes)
+    {
+        $query = "INSERT INTO farrowing (pigId, penId, breeding_date, expected_farrowing_date, sire, pregnancy_status, health_status, litter_size, notes)
+                  VALUES (:pigId, :penId, :breeding_date, :expected_farrowing_date, :sire, :pregnancy_status, :health_status, :litter_size, :notes)";
+    
+        $params = [
+            ':pigId' => $pigId,
+            ':penId' => $penId,
+            ':breeding_date' => $breeding_date,
+            ':expected_farrowing_date' => $expected_farrowing_date,
+            ':sire' => $sire,
+            ':pregnancy_status' => $pregnancy_status,
+            ':health_status' => $health_status,
+            ':litter_size' => $litter_size,
+            ':notes' => $notes
+        ];
+    
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
+    }
+    
 }
