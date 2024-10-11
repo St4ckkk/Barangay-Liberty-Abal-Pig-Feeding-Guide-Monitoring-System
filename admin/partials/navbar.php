@@ -1,3 +1,5 @@
+
+
 <header id="header" class="header fixed-top d-flex align-items-center" style="background-color:#418091; padding: 10px 20px;">
   <i class="bi bi-list toggle-sidebar-btn me-3" style="color: white; font-size: 1.5rem; cursor: pointer;"></i>
   <div class="d-flex align-items-center justify-content-between flex-grow-1">
@@ -9,29 +11,35 @@
         <li class="nav-item dropdown">
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-bell text-white"></i>
-            <span class="badge bg-primary badge-number"></span>
-          </a><!-- End Notification Icon -->
-
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+            <span class="badge bg-primary badge-number"><?= count($notifications); ?></span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications" style="color: #000;">
             <li class="dropdown-header">
-              <span class="messageCount"></span>
+              <span class="messageCount"><?= count($notifications) ?> new notifications</span>
               <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
 
-            <li class="notification-item">
-              <div>
-                <h4><span id="messageTitle"></span></h4>
-                <p><span id="messageBody"></span></p>
-                <p><span id="messageAgo"></span></p>
-              </div>
-            </li>
+            <?php if (empty($notifications)): ?>
+              <li class="notification-item">
+                <div>No new notifications</div>
+              </li>
+            <?php else: ?>
+              <?php foreach ($notifications as $notification): ?>
+                <li class="notification-item">
+                  <div>
+                    <h4 style="color: #000;"><span><?= htmlspecialchars($notification['message']); ?></span></h4>
+                    <p><span>Scheduled Time: <?= htmlspecialchars($notification['schedTime']); ?></span></p>
+                  </div>
+                </li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+              <?php endforeach; ?>
+            <?php endif; ?>
 
-            <li>
-              <hr class="dropdown-divider">
-            </li>
             <li class="dropdown-footer">
               <a href="#">Show all notifications</a>
             </li>
@@ -40,7 +48,7 @@
         <li class="nav-item dropdown">
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown" style="color: white;">
             <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px;">
-            <span class="d-none d-md-block dropdown-toggle ps-2"> <?= isset($_SESSION['u']) ? htmlspecialchars($_SESSION['u']) : 'Guest'; ?></span>
+            <span class="d-none d-md-block dropdown-toggle ps-2"><?= isset($_SESSION['u']) ? htmlspecialchars($_SESSION['u']) : 'Guest'; ?></span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">

@@ -232,4 +232,12 @@ class inventoryController
 
         return $stmt->execute([':penId' => $penId, ':schedId' => $schedId]);
     }
+
+    public function getPenNoById($penId)
+    {
+        $query = 'SELECT penno FROM pigpen WHERE penId = :penId';
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([':penId' => $penId]); // Correctly bind the parameter
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Fetch as associative array
+    }
 }

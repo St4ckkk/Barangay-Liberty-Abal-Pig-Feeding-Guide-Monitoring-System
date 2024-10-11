@@ -234,7 +234,6 @@ class settingsController
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);
 
-        // Return true if rows were affected (means update succeeded)
         return $stmt->rowCount() > 0;
     }
 

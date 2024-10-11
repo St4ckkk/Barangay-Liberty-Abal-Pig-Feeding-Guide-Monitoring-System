@@ -5,6 +5,19 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
   exit();
 }
 
+
+
+
+require_once './core/notificationController.php';
+
+$notificationController = new notificationController();
+
+
+$currentTime = date('Y-m-d H:i:s');
+
+
+$notifications = $notificationController->getNotification();
+
 ?>
 
 <!DOCTYPE html>
