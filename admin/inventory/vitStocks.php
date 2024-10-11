@@ -1,3 +1,21 @@
+<?php
+require_once '../core/inventoryController.php';
+$inventories = new inventoryController();
+require_once '../core/notificationController.php';
+if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+    header('Location: index.php');
+    exit();
+}
+$notificationController = new notificationController();
+$currentTime = date('Y-m-d H:i:s');
+$notifications = $notificationController->getNotification();
+
+
+$pens = $inventories->getPigPens();
+$success = '';
+$error = '';
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 

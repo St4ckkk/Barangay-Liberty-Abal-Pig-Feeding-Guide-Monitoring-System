@@ -1,7 +1,12 @@
 <?php
 require_once '../core/userController.php';
 $users = (new userController())->getAllUsers();
+require_once '../core/notificationController.php';
 
+$notificationController = new notificationController();
+
+$currentTime = date('Y-m-d H:i:s');
+$notifications = $notificationController->getNotification();
 ?>
 
 <!DOCTYPE html>
@@ -55,17 +60,17 @@ $users = (new userController())->getAllUsers();
         </div>
 
         <section class="section">
-            <?php if (!empty($success)): ?>
-                <div class="alert alert-success">
-                    <?php echo $success; ?>
-                </div>
-            <?php endif; ?>
+            <?php
+            if (isset($_SESSION['error'])) {
+                echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
+                unset($_SESSION['error']);
+            }
 
-            <?php if (!empty($error)): ?>
-                <div class="alert alert-danger">
-                    <?php echo $error; ?>
-                </div>
-            <?php endif; ?>
+            if (isset($_SESSION['success'])) {
+                echo '<div class="alert alert-success" role="alert">' . $_SESSION['success'] . '</div>';
+                unset($_SESSION['success']);
+            }
+            ?>
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card">
@@ -77,6 +82,7 @@ $users = (new userController())->getAllUsers();
                                 <thead>
                                     <th scope="col">Username</th>
                                     <th scope="col">Status</th>
+                                    <th scope="col">Role</th>
                                     <th scope="col">Actions</th>
                                 </thead>
                                 <tbody>
@@ -85,6 +91,7 @@ $users = (new userController())->getAllUsers();
                                             <tr>
                                                 <td><?php echo htmlspecialchars($user['username']) ?></td>
                                                 <td><?php echo htmlspecialchars($user['status']) ?></td>
+                                                <td><?php echo htmlspecialchars($user['role']) ?></td>
                                                 <td>
                                                     <a href="editUser.php?id=<?php echo $user['userId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
                                                     <a href="deleteUser.php?id=<?php echo $user['userId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
@@ -113,6 +120,13 @@ $users = (new userController())->getAllUsers();
                                 <div class="mb-3">
                                     <label for="feedName" class="form-label">Username</label>
                                     <input type="text" class="form-control" id="feedName" name="username" placeholder="Enter Username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="quantityPerSack" class="form-label">Role</label>
+                                    <select name="role" id="" class="form-control">
+                                        <option value="admin">Admin</option>
+                                        <option value="worker">Worker</option>
+                                    </select>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Submit</button>
                             </form>

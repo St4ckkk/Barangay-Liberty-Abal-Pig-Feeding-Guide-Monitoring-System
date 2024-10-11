@@ -12,12 +12,13 @@ class userController
         $this->db = $database->getConnection();
     }
 
-    public function createUsers($username, $password, $status)
+    public function createUsers($username, $password, $status, $role)
     {
 
-        $query = "INSERT INTO users (username, password, status) VALUES (:username, :password, :status)";
+        $query = "INSERT INTO users (username, password, status, role) VALUES (:username, :password, :status, :role)";
         $params = [
             ':username' => $username,
+            ':role' => $role,
             ':password' => $password,
             ':status' => $status
         ];

@@ -1,9 +1,12 @@
 <?php
 require_once '../core/userController.php';
 $users = (new userController())->getAllUsers();
+require_once '../core/notificationController.php';
 
+$notificationController = new notificationController();
+$currentTime = date('Y-m-d H:i:s');
+$notifications = $notificationController->getNotification();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,7 +44,6 @@ $users = (new userController())->getAllUsers();
     include_once '../partials/navbar.php';
     include_once '../partials/sidebar.php';
     ?>
-
     <main id="main" class="main">
 
         <div class="pagetitle">

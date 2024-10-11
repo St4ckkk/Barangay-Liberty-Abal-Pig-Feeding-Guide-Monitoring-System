@@ -25,7 +25,7 @@
             <?php if (empty($notifications)): ?>
               <li class="notification-item">
                 <div>No new notifications</div>
-              </li>
+              </li> 
             <?php else: ?>
               <?php foreach ($notifications as $notification): ?>
                 <li class="notification-item">

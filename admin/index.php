@@ -1,3 +1,14 @@
+<?php 
+require_once './core/Database.php';
+
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
+  header('Location: dashboard.php');
+}
+$success ='';
+$error = '';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +21,7 @@
   <meta content="" name="keywords">
 
 
-  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/pig-logo.png" rel="icon">
 
   <link href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -38,10 +49,9 @@
         <div class="container">
           <div class="row justify-content-center">
             <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-
               <div class="d-flex justify-content-center py-4">
                 <a href="index.html" class="logo d-flex align-items-center w-auto">
-                  <span class="d-none d-lg-block"></span>
+                  <img src="assets/img/pig-logo.png" alt="" width="100">
                 </a>
               </div>
               <div class="card mb-3">
@@ -68,10 +78,17 @@
                     </div>
 
                     <div class="col-12">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">Remember me</label>
-                      </div>
+                      <?php
+                      if (isset($_SESSION['error'])) {
+                        echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
+                        unset($_SESSION['error']);
+                      }
+
+                      if (isset($_SESSION['success'])) {
+                        echo '<div class="alert alert-success" role="alert">' . $_SESSION['success'] . '</div>';
+                        unset($_SESSION['success']);
+                      }
+                      ?>
                     </div>
                     <div class="col-12">
                       <button class="btn btn-primary w-100" type="submit">Login</button>

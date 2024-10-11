@@ -1,12 +1,16 @@
 <?php
 require_once '../core/Database.php';
 require_once '../core/guidelinesController.php';
+require_once '../core/notificationController.php';
 
 if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
     header('Location: index.php');
     exit();
 }
 
+$notificationController = new notificationController();
+$currentTime = date('Y-m-d H:i:s');
+$notifications = $notificationController->getNotification();
 $guidelines = (new guidelinesController())->getPigs();
 $success = '';
 $error = '';
@@ -103,7 +107,7 @@ $error = '';
                                                 <td><?= $guideline['pigType'] ?></td>
                                                 <td><?= $guideline['breed'] ?></td>
                                                 <td><?= $guideline['sex'] ?></td>
-                                                <td><?= $guideline['description']?></td>
+                                                <td><?= $guideline['description'] ?></td>
                                                 <td>
                                                     <a href="editPigs.php?id=<?= $guideline['guideId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
                                                     <a href="deletePigs.php?id=<?= $guideline['guideId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>

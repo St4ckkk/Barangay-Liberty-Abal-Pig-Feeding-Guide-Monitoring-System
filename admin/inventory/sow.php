@@ -1,6 +1,10 @@
     <?php
     require_once '../core/inventoryController.php';
+    require_once '../core/notificationController.php';
 
+    $notificationController = new notificationController();
+    $currentTime = date('Y-m-d H:i:s');
+    $notifications = $notificationController->getNotification();
     if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
         header('Location: index.php');
         exit();
