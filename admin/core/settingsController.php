@@ -28,15 +28,31 @@ class settingsController
         return $stmt->execute($params);
     }
 
-    public function addSchedForFeedingTime($penId = null, $schedTime, $schedType)
+    public function addSchedForFeedingTime($penId = null, $schedTime, $schedType, $status)
     {
-        $query = "INSERT INTO schedule (penId, schedTime, schedType) VALUES (:penId, :schedTime, :schedType)";
+        $query = "INSERT INTO schedule (penId, schedTime, schedType, status) VALUES (:penId, :schedTime, :schedType, :status)";
         $params = [
             ':penId' => $penId,
             ':schedTime' => $schedTime,
-            ':schedType' => $schedType
+            ':schedType' => $schedType,
+            ':status' => $status
         ];
 
+        $stmt = $this->db->prepare($query);
+        if ($stmt->execute($params)) {
+            return $this->db->lastInsertId();
+        }
+        return false;
+    }
+
+    public function addFeedingTime($penId = null, $schedId, $feedsName)
+    {
+        $query = "INSERT INTO feeding (penId, schedId, feedsName) VALUES (:penId, :schedId, :feedsName)";
+        $params = [
+            ":penId" => $penId,
+            ":schedId" => $schedId,
+            "feedsName" => $feedsName
+        ];
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
     }
@@ -100,7 +116,7 @@ class settingsController
         $query = "SELECT s.*, p.ear_tag_number, p.breed, p.weight, p.age, pe.penno
               FROM slaughter s
               JOIN pigs p ON s.pigId = p.pig_id
-              JOIN pigpen pe ON p.penId = pe.penId";  // Assuming 'pen_id' is the foreign key in both tables
+              JOIN pigpen pe ON p.penId = pe.penId";
 
         $stmt = $this->db->prepare($query);
         $stmt->execute();
@@ -180,5 +196,56 @@ class settingsController
         $stmt = $this->db->prepare($query);
         $stmt->execute([':penId' => $penId]);
         return $stmt->fetchAll();
+    }
+
+    public function getFeeds()
+    {
+        $query = "SELECT * FROM feedstock";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function updateSchedFeedingTime($penId, $schedTime, $status)
+    {
+        $query = "UPDATE schedule SET schedTime = :schedTime, status = :status WHERE penId = :penId";
+        $params = [
+            ':schedTime' => $schedTime,
+            ':status' => $status,
+            ':penId' => $penId
+        ];
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+
+        // Return true if rows were affected (means update succeeded)
+        return $stmt->rowCount() > 0;
+    }
+
+    public function updateFeedingTime($penId, $schedId, $feedsName)
+    {
+        $query = "UPDATE feeding SET feedsName = :feedsName WHERE penId = :penId AND schedId = :schedId";
+        $params = [
+            ":penId" => $penId,
+            ":schedId" => $schedId,
+            ":feedsName" => $feedsName
+        ];
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+
+        // Return true if rows were affected (means update succeeded)
+        return $stmt->rowCount() > 0;
+    }
+
+    public function getScheduleForPen($penId)
+    {
+        $query = "SELECT schedId FROM schedule WHERE penId = :penId";
+        $params = [':penId' => $penId];
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

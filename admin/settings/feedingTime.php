@@ -10,19 +10,19 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
 
 $feedings = (new settingsController())->getFeedingTime();
 $pens = (new inventoryController())->getPigPens();
+$feeds = (new settingsController())->getFeeds();
 $success = '';
 $error = '';
 
-// Group feeding times by their time
 $groupedFeedings = [];
 
 foreach ($feedings as $feeding) {
     $timeKey = date('g:i A', strtotime($feeding['schedTime']));
 
     if (!isset($groupedFeedings[$timeKey])) {
-        $groupedFeedings[$timeKey] = []; // Create an array for this time if it doesn't exist
+        $groupedFeedings[$timeKey] = [];
     }
-    $groupedFeedings[$timeKey][] = $feeding; // Add the feeding entry to the corresponding time
+    $groupedFeedings[$timeKey][] = $feeding;
 }
 ?>
 
@@ -96,6 +96,7 @@ foreach ($feedings as $feeding) {
                                 <thead>
                                     <th scope="col">Time</th>
                                     <th scope="col">Schedule For</th>
+                                    <th scope="col">Status</th>
                                     <th scope="col">Action</th>
                                 </thead>
                                 <tbody>
@@ -104,20 +105,27 @@ foreach ($feedings as $feeding) {
                                             <tr>
                                                 <td><?php echo $time; ?></td>
                                                 <td>
-                                                    <?php if (count($feedingsAtTime) > 1) : ?>
-                                                        To All Pig Pens
-                                                    <?php else : ?>
-                                                        Pig Pen #<?php echo $feedingsAtTime[0]['penno']; ?>
-                                                    <?php endif; ?>
+                                                    <?php $scheduleFor = (count($feedingsAtTime) > 1) ? 'To All Pig Pens' : 'Pig Pen #' . $feedingsAtTime[0]['penno']; ?>
+                                                    <?php echo $scheduleFor; ?>
+                                                </td>
+                                                <td><?php echo ucfirst($feedingsAtTime[0]['status']); ?></td>
                                                 <td>
-                                                    <a href="editFeedingTime.php?id=<?php echo $feedingsAtTime[0]['schedId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
-                                                    <a href="editFeedingTime.php?id=<?php echo $feedingsAtTime[0]['schedId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                    <button class="btn btn-primary"
+                                                        onclick="openEditModal('<?php echo $feedingsAtTime[0]['schedId']; ?>', 
+                                                   '<?php echo $time; ?>', 
+                                                   '<?php echo $scheduleFor; ?>', 
+                                                   '<?php echo $feedingsAtTime[0]['status']; ?>')">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                    <a href="deleteFeedingTime.php?id=<?php echo $feedingsAtTime[0]['schedId'] ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this feeding time?');">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="2">No feeding time found.</td>
+                                            <td colspan="5">No feeding time found.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -134,20 +142,25 @@ foreach ($feedings as $feeding) {
                             <form action="addFeedingTime.php" method="post">
                                 <div class="mb-3">
                                     <label for="feedingTime" class="form-label">Feeding Time</label>
-                                    <input type="time" class="form-control" id="feedingTime" name="schedTime" placeholder="Enter Feeding Time" required>
+                                    <input type="time" class="form-control" id="feedingTime" name="schedTime" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="penSelect" class="form-label">Select Pen</label>
                                     <select class="form-select" id="penSelect" name="penId" required>
                                         <option value="">Select a pen</option>
                                         <option value="all">All Pens</option>
-                                        <?php if (!empty($pens)): ?>
-                                            <?php foreach ($pens as $pen): ?>
-                                                <option value="<?php echo $pen['penId']; ?>">#<?php echo $pen['penno']; ?></option>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <option value="">No pens available</option>
-                                        <?php endif; ?>
+                                        <?php foreach ($pens as $pen): ?>
+                                            <option value="<?php echo $pen['penId']; ?>">#<?php echo $pen['penno']; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="feedingType" class="form-label">Feeds Type</label>
+                                    <select class="form-select" id="feedingType" name="feedingType" required>
+                                        <option value="" selected disabled>--Select feeding type--</option>
+                                        <?php foreach ($feeds as $feed): ?>
+                                            <option value="<?= $feed['feedsName'] ?>"><?= $feed['feedsName'] ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Submit</button>
@@ -157,6 +170,56 @@ foreach ($feedings as $feeding) {
                 </div>
             </div>
         </section>
+
+        <!-- Edit Feeding Time Modal -->
+        <div class="modal fade" id="editFeedingModal" tabindex="-1" aria-labelledby="editFeedingModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editFeedingModalLabel">Edit Feeding Time</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editFeedingForm" action="updateFeedingTime.php" method="post">
+                            <input type="hidden" name="schedId" id="editSchedId">
+                            <div class="mb-3">
+                                <label for="editFeedingTime" class="form-label">Feeding Time</label>
+                                <input type="time" class="form-control" id="editFeedingTime" name="schedTime" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editPenSelect" class="form-label">Select Pen</label>
+                                <select class="form-select" id="editPenSelect" name="penId" required>
+                                    <option value="">Select a pen</option>
+                                    <option value="all">All Pens</option>
+                                    <?php foreach ($pens as $pen): ?>
+                                        <option value="<?php echo $pen['penId']; ?>">#<?php echo $pen['penno']; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editFeedingType" class="form-label">Feeds Type</label>
+                                <select class="form-select" id="editFeedingType" name="feedingType" required>
+                                    <option value="" selected disabled>--Select feeding type--</option>
+                                    <?php foreach ($feeds as $feed): ?>
+                                        <option value="<?= $feed['feedsName'] ?>"><?= $feed['feedsName'] ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editStatus" class="form-label">Status</label>
+                                <select class="form-select" id="editStatus" name="status" required>
+                                    <option value="process">In Process</option>
+                                    <option value="unprocess">Unprocessed</option>
+                                    <option value="done">Done</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -165,12 +228,47 @@ foreach ($feedings as $feeding) {
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/vendor/chart.js/chart.umd.js"></script>
     <script src="../assets/vendor/echarts/echarts.min.js"></script>
-    <script src="../assets/vendor/quill/quill.js"></script>
+    <script src="../assets/vendor/quill/quill.min.js"></script>
     <script src="../assets/vendor/simple-datatables/simple-datatables.js"></script>
     <script src="../assets/vendor/tinymce/tinymce.min.js"></script>
     <script src="../assets/vendor/php-email-form/validate.js"></script>
 
     <script src="../assets/js/main.js"></script>
+    <script>
+        function openEditModal(schedId, time, penno, feedingType, status) {
+            document.getElementById('editSchedId').value = schedId;
+            document.getElementById('editFeedingTime').value = convertTo24Hour(time);
+            document.getElementById('editPenSelect').value = penno === 'To All Pig Pens' ? 'all' : getPenIdFromPenno(penno);
+            document.getElementById('editFeedingType').value = feedingType;
+            document.getElementById('editStatus').value = status;
+
+            var editModal = new bootstrap.Modal(document.getElementById('editFeedingModal'));
+            editModal.show();
+        }
+
+
+        function getPenIdFromPenno(penno) {
+            const select = document.getElementById('editPenSelect');
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].text === `#${penno}`) {
+                    return select.options[i].value;
+                }
+            }
+            return '';
+        }
+
+        function convertTo24Hour(time12h) {
+            const [time, modifier] = time12h.split(' ');
+            let [hours, minutes] = time.split(':');
+            if (hours === '12') {
+                hours = '00';
+            }
+            if (modifier === 'PM') {
+                hours = parseInt(hours, 10) + 12;
+            }
+            return `${hours}:${minutes}`;
+        }
+    </script>
 </body>
 
 </html>
