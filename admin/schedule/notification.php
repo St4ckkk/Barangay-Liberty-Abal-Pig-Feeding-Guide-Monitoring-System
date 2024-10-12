@@ -9,14 +9,15 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
     exit();
 }
 
-$notification = null;
+$notificationController = new NotificationController();
+$notificationData = [];
+$notificationId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-if (isset($_GET['id'])) {
-    $notificationId = $_GET['id'];
-    $notificationController = new NotificationController();
-    $notification = $notificationController->getNotificationById($notificationId);
+if ($notificationId) {
+    $notificationData = $notificationController->getNotificationById($notificationId);
 
-    if (!$notification) {
+
+    if (!$notificationData) {
         echo "Notification not found.";
         exit;
     }
@@ -24,16 +25,10 @@ if (isset($_GET['id'])) {
     echo "No notification ID provided.";
     exit;
 }
-if ($notification) {
-    echo "Feeding Frequency: " . ($notification['feeding_frequency'] ?? 'N/A') . "<br>";
-    echo "Morning Feeding Time: " . ($notification['morning_feeding_time'] ?? 'N/A') . "<br>";
-    echo "Noon Feeding Time: " . ($notification['noon_feeding_time'] ?? 'N/A') . "<br>";
-    echo "Evening Feeding Time: " . ($notification['evening_feeding_time'] ?? 'N/A') . "<br>";
-} else {
-    echo "No notification found.";
-}
+
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -104,15 +99,15 @@ if ($notification) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php if ($notification): ?>
+                                            <?php if ($notificationData): ?>
                                                 <tr>
-                                                    <td><?= htmlspecialchars($notification['feeding_frequency']); ?></td>
-                                                    <td><?= htmlspecialchars($notification['morning_feeding_time']); ?></td>
-                                                    <td><?= htmlspecialchars($notification['noon_feeding_time']); ?></td>
-                                                    <td><?= htmlspecialchars($notification['evening_feeding_time']); ?></td>
+                                                    <td><?= htmlspecialchars($notificationData['feeding_frequency']); ?></td>
+                                                    <td><?= formatTime($notificationData['morning_feeding_time']); ?></td>
+                                                    <td><?= formatTime($notificationData['noon_feeding_time']); ?></td>
+                                                    <td><?= formatTime($notificationData['evening_feeding_time']); ?></td>
                                                     <td>
-                                                        <a href="edit_notification.php?id=<?= $notification['id']; ?>" class="btn btn-primary">Edit</a>
-                                                        <a href="delete_notification.php?id=<?= $notification['id']; ?>" class="btn btn-danger">Delete</a>
+                                                        <a href="edit_notification.php?id=<?= $notificationData['id']; ?>" class="btn btn-primary">Edit</a>
+                                                        <a href="delete_notification.php?id=<?= $notificationData['id']; ?>" class="btn btn-danger">Delete</a>
                                                     </td>
                                                 </tr>
                                             <?php else: ?>
@@ -120,6 +115,20 @@ if ($notification) {
                                                     <td colspan="6">No Notification Found</td>
                                                 </tr>
                                             <?php endif; ?>
+
+                                            <?php
+                                            // Function to format time from 24-hour to 12-hour AM/PM format
+                                            function formatTime($time)
+                                            {
+                                                if ($time) {
+                                                    // Convert time string to a DateTime object
+                                                    $dateTime = DateTime::createFromFormat('H:i:s', $time);
+                                                    return $dateTime ? $dateTime->format('h:i A') : 'N/A';
+                                                }
+                                                return 'N/A';
+                                            }
+                                            ?>
+
                                         </tbody>
 
                                     </table>
