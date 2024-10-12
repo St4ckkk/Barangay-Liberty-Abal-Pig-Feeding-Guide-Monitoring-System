@@ -15,7 +15,7 @@ class userController
     public function createUsers($username, $password, $status, $role)
     {
 
-        $query = "INSERT INTO users (username, password, status, role) VALUES (:username, :password, :status, :role)";
+        $query = "INSERT INTO useraccount (username, password, status, role) VALUES (:username, :password, :status, :role)";
         $params = [
             ':username' => $username,
             ':role' => $role,
@@ -32,7 +32,7 @@ class userController
 
     public function getAllUsers() {
 
-        $query = "SELECT * FROM users";
+        $query = "SELECT * FROM useraccount";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();

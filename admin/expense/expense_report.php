@@ -10,7 +10,7 @@ class PDF extends FPDF
     {
         // Logo
         $this->Image('../assets/img/pig-logo.png', 10, 6, 30);
-        // Arial bold 15
+        // Set font
         $this->SetFont('Courier', 'B', 15);
         // Move to the right
         $this->Cell(80);
@@ -19,6 +19,7 @@ class PDF extends FPDF
         // Line break
         $this->Ln(20);
 
+        // Subtitle
         $this->SetFont('Courier', '', 12);
         $this->Cell(0, 10, 'Expense Report', 0, 1, 'C');
         $this->Cell(0, 10, 'Generated on: ' . date('F d, Y'), 0, 1, 'C');
@@ -29,7 +30,7 @@ class PDF extends FPDF
     {
         // Position at 1.5 cm from bottom
         $this->SetY(-15);
-        // Arial italic 8
+        // Set font
         $this->SetFont('Courier', 'I', 8);
         // Page number
         $this->Cell(0, 10, 'Page ' . $this->PageNo() . '/{nb}', 0, 0, 'C');
@@ -59,7 +60,7 @@ $totalExpense = 0;
 foreach ($expenses as $expense) {
     $pdf->Cell(50, 10, $expense['expenseName'], 1);
     $pdf->Cell(40, 10, $expense['expenseType'], 1);
-    $pdf->Cell(40, 10, '' . number_format($expense['total'], 2), 1);
+    $pdf->Cell(40, 10, number_format($expense['total'], 2), 1);
     $pdf->Cell(60, 10, date('M d, Y', strtotime($expense['expenseDate'])), 1);
     $pdf->Ln();
     $totalExpense += $expense['total'];
@@ -68,7 +69,7 @@ foreach ($expenses as $expense) {
 // Total
 $pdf->SetFont('Courier', 'B', 12);
 $pdf->Cell(130, 10, 'Total Expenses:', 1);
-$pdf->Cell(60, 10, '' . number_format($totalExpense, 2), 1);
+$pdf->Cell(60, 10, number_format($totalExpense, 2), 1);
 
 // Output PDF to a specified path
 $pdfFilePath = 'Expense_Report.pdf';
@@ -76,7 +77,11 @@ $pdf->Output($pdfFilePath, 'F');
 
 // Check if PDF was created successfully
 if (file_exists($pdfFilePath)) {
-    echo "PDF generated successfully. <a href='$pdfFilePath' target='_blank'>Download PDF</a>";
+    // Set header for download
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="' . basename($pdfFilePath) . '"');
+    readfile($pdfFilePath);
+    exit; // Stop script execution after download
 } else {
     echo "Failed to generate PDF.";
 }

@@ -47,7 +47,7 @@ $error = '';
     <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="../assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="../assets/css/global.css" rel="stylesheet">
 </head>
 <style>
     .btn {
@@ -59,6 +59,10 @@ $error = '';
     .custom-btn {
         width: 150px;
         padding: 5px;
+    }
+
+    .dl {
+        width: 100px;
     }
 </style>
 
@@ -103,7 +107,7 @@ $error = '';
                                 <div class="datatable-top">
                                     <div class="datatable-dropdown">
                                         <div class="float-end">
-                                            <a href="expense_report.php" class="custom-btn btn btn-primary float-end mb-3 ">
+                                            <a href="#" class="custom-btn btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#confirmationModal">
                                                 Generate PDF Report <i class="bi bi-file-earmark-pdf"></i>
                                             </a>
                                         </div>
@@ -170,6 +174,23 @@ $error = '';
                 </div>
             </div>
         </section>
+        <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmationModalLabel">Confirm Download</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to download the Expense Report PDF?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="dl btn btn-primary" id="confirmDownload">Download PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -184,6 +205,21 @@ $error = '';
     <script src="../assets/vendor/php-email-form/validate.js"></script>
 
     <script src="../assets/js/main.js"></script>
+    <script>
+        document.getElementById('confirmDownload').addEventListener('click', function() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+            modal.hide();
+
+           
+            const link = document.createElement('a');
+            link.href = 'expense_report.php'; // The URL that generates the PDF
+            link.download = 'Expense_Report.pdf'; // Optional: specify a default file name
+            document.body.appendChild(link); // Append link to body
+            link.click(); // Programmatically click the link
+            document.body.removeChild(link); // Remove link from body
+        });
+    </script>
+
 </body>
 
 </html>

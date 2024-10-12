@@ -15,6 +15,74 @@ class settingsController
     }
 
 
+    public function sendNotification($title, $message, $refId)
+    {
+        try {
+
+            $query = "SELECT userId FROM useraccount WHERE status = 'active' AND role = 'worker'";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            $activeWorkers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (!empty($activeWorkers)) {
+                $insertQuery = "INSERT INTO notifications (title, message, userId, refId) VALUES (:title, :message, :userId, :refId)";
+                $stmtInsert = $this->db->prepare($insertQuery);
+
+                foreach ($activeWorkers as $worker) {
+                    $stmtInsert->execute([
+                        ':title' => $title,
+                        ':message' => $message,
+                        ':userId' => $worker['userId'],
+                        ':refId' => $refId
+                    ]);
+                }
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            error_log('Error sending notification: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
+    public function addFeedingPeriod($feedingFrequency, $morningTime = null, $noonTime = null, $eveningTime = null): ?int
+    {
+        // Prepare the SQL query for inserting a feeding period
+        $query = "INSERT INTO feeding_period (feeding_frequency, morning_feeding_time, noon_feeding_time, evening_feeding_time) VALUES (:frequency, :morning, :noon, :evening)";
+
+        // Set up the parameters for the SQL statement
+        $params = [
+            ':frequency' => $feedingFrequency,
+            ':morning' => $morningTime,
+            ':noon' => $noonTime,
+            ':evening' => $eveningTime,
+        ];
+
+        // Adjust parameters based on feeding frequency
+        switch ($feedingFrequency) {
+            case 'once':
+                $params[':noon'] = null; // Set noon to null
+                $params[':evening'] = null; // Set evening to null
+                break;
+            case 'twice':
+                $params[':noon'] = null; // Set noon to null
+                break;
+            case 'thrice':
+            case 'custom':
+                break; // All parameters are already set
+        }
+
+        // Prepare and execute the SQL statement
+        $stmt = $this->db->prepare($query);
+        if ($stmt->execute($params)) {
+            // Return the ID of the newly inserted feeding period
+            return (int)$this->db->lastInsertId(); // Return as an integer
+        }
+
+        return null; // Return null if the insertion failed
+    }
+
     public function addSlaughteringSched($penId, $schedTime, $schedDate, $schedType)
     {
         $query = "INSERT INTO schedule (penId, schedTime, schedDate, schedType) VALUES (:penId, :schedTime, :schedDate, :schedType)";
@@ -24,11 +92,11 @@ class settingsController
             ':schedDate' => $schedDate,
             ':schedType' => $schedType
         ];
-
+        
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
     }
-
+    
     public function addSchedForFeedingTime($penId = null, $schedTime, $schedType, $status)
     {
         $query = "INSERT INTO schedule (penId, schedTime, schedType, status) VALUES (:penId, :schedTime, :schedType, :status)";
@@ -46,67 +114,64 @@ class settingsController
         return false;
     }
 
-    public function addFeedingTime($penId = null, $schedId, $feedsName)
+
+
+    public function addCleaningPeriod($feedingFrequency, $morningTime = null, $noonTime = null, $eveningTime = null): bool
     {
-        $query = "INSERT INTO feeding (penId, schedId, feedsName) VALUES (:penId, :schedId, :feedsName)";
+        $query = "INSERT INTO cleaning_period (cleaning_frequency, morning_cleaning_time, noon_cleaning_time, evening_cleaning_time) VALUES (:frequency, :morning, :noon, :evening)";
+
         $params = [
-            ":penId" => $penId,
-            ":schedId" => $schedId,
-            "feedsName" => $feedsName
+            ':frequency' => $feedingFrequency,
+            ':morning' => $morningTime,
+            ':noon' => $noonTime,
+            ':evening' => $eveningTime,
         ];
+        switch ($feedingFrequency) {
+            case 'once':
+                $params[':noon'] = null;
+                $params[':evening'] = null;
+                break;
+            case 'twice':
+                $params[':noon'] = null;
+                break;
+            case 'thrice':
+            case 'custom':
+                break;
+        }
+
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
     }
 
 
-    public function addSchedForCleaning($schedTime, $schedType)
+    public function addSlaughteringPeriod($penId, $pigId, $slaughtering_date, $slaughtering_time, $status)
     {
-        $query = "INSERT INTO schedule (schedTime, schedType) VALUES (:schedTime, :schedType)";
-        $params = [
-            ':schedTime' => $schedTime,
-            ':schedType' => $schedType
-        ];
-
-        $stmt = $this->db->prepare($query);
-        return $stmt->execute($params);
-    }
-
-
-
-    public function addSlaughteringPeriod($penId, $pigId, $slaughtering_date, $slaughtering_time)
-    {
-        $query = "INSERT INTO slaughter (penId, pigId, slaughtering_date, slaughtering_time) VALUES (:penId, :pigId, :slaughtering_date, :slaughtering_time)";
+        $query = "INSERT INTO slaughtering_period (penId, pigId, slaughtering_date, slaughtering_time, status) VALUES (:penId, :pigId, :slaughtering_date, :slaughtering_time, :status)";
 
         $params = [
             ':penId' => $penId,
             ':pigId' => $pigId,
             ':slaughtering_date' => $slaughtering_date,
-            ':slaughtering_time' => $slaughtering_time
+            ':slaughtering_time' => $slaughtering_time,
+            ':status' => $status,
         ];
 
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
     }
 
-
-
-    public function getFeedingTime()
+    public function getCleaningPeriod()
     {
-        $query = "
-            SELECT s.*, p.penno 
-            FROM schedule s 
-            JOIN pigpen p ON s.penId = p.penId 
-            WHERE s.schedType = 'Feeding'
-        ";
+        $query = "SELECT * FROM cleaning_period";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
 
-    public function getCleaningPeriod()
+    public function getFeedingPeriod()
     {
-        $query = "SELECT * FROM schedule WHERE schedType = 'Cleaning'";
+        $query = "SELECT * FROM feeding_period";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -115,7 +180,7 @@ class settingsController
     public function getSlaughteringPeriod()
     {
         $query = "SELECT s.*, p.ear_tag_number, p.breed, p.weight, p.age, pe.penno
-              FROM slaughter s
+              FROM slaughtering_period s
               JOIN pigs p ON s.pigId = p.pig_id
               JOIN pigpen pe ON p.penId = pe.penId";
 
@@ -126,18 +191,38 @@ class settingsController
 
     public function getPigsByPen($penId)
     {
-        $query = "SELECT * FROM pigs WHERE penId = :penId AND status = 'ready for slaughter' AND health_status = 'healthy'";
-        $params = [':penId' => $penId];
+
+        $minAge = 5;
+        $maxAge = 6;
+        $minWeight = 91;
+        $maxWeight = 136;
+        $query = "SELECT * FROM pigs 
+              WHERE penId = :penId 
+              AND status = 'ready for slaughtering' 
+              AND age >= :minAge 
+              AND age <= :maxAge 
+              AND weight >= :minWeight 
+              AND weight <= :maxWeight";
+
+        $params = [
+            ':penId' => $penId,
+            ':minAge' => $minAge,
+            ':maxAge' => $maxAge,
+            ':minWeight' => $minWeight,
+            ':maxWeight' => $maxWeight
+        ];
+
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
+
     public function updateSlaughteringPeriod($slauId, $status, $slaughtering_date, $slaughtering_time,)
     {
-        $query = "UPDATE slaughter SET userStatus = :userStatus, slaughtering_date = :slaughtering_date, slaughtering_time = :slaughtering_time WHERE slauId = :slauId";
+        $query = "UPDATE slaughtering_period SET status = :status, slaughtering_date = :slaughtering_date, slaughtering_time = :slaughtering_time WHERE slauId = :slauId";
         $params = [
-            ':userStatus' => $status,
+            ':status' => $status,
             ':slaughtering_date' => $slaughtering_date,
             ':slaughtering_time' => $slaughtering_time,
             ':slauId' => $slauId
@@ -146,6 +231,16 @@ class settingsController
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
     }
+
+    public function deleteSlaughteringPeriod($slauId)
+    {
+        $query = "DELETE FROM slaughtering_period WHERE slauId = :slauId";
+        $params = [':slauId' => $slauId];
+
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
+    }
+
 
     public function getPigPens()
     {
@@ -184,7 +279,8 @@ class settingsController
     }
 
 
-    public function getFemaleDams($penId) {
+    public function getFemaleDams($penId)
+    {
         $query = "
         SELECT pigs.pig_id, pigs.ear_tag_number, pigs.breed 
         FROM pigs
@@ -192,12 +288,12 @@ class settingsController
         AND pigs.gender = 'female' 
         AND pigs.status = 'ready for breeding'
         ";
-    
+
         $stmt = $this->db->prepare($query);
         $stmt->execute([':penId' => $penId]);
         return $stmt->fetchAll();
     }
-    
+
 
     public function getMaleSire()
     {
@@ -213,7 +309,7 @@ class settingsController
         return $stmt->fetchAll();
     }
 
-    
+
 
 
 
@@ -272,7 +368,7 @@ class settingsController
     {
         $query = "INSERT INTO farrowing (pigId, penId, breeding_date, expected_farrowing_date, sire, pregnancy_status, health_status, litter_size, notes)
                   VALUES (:pigId, :penId, :breeding_date, :expected_farrowing_date, :sire, :pregnancy_status, :health_status, :litter_size, :notes)";
-    
+
         $params = [
             ':pigId' => $pigId,
             ':penId' => $penId,
@@ -284,9 +380,8 @@ class settingsController
             ':litter_size' => $litter_size,
             ':notes' => $notes
         ];
-    
+
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
     }
-    
 }

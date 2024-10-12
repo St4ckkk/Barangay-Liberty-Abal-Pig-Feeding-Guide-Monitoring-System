@@ -21,7 +21,7 @@ if ($penId) {
     $penno = $inventoryController->getPenNo($penId);
 }
 
-$sched = $inventoryController->getFeedingSched();
+
 
 $inputId = $penId;
 $success = '';

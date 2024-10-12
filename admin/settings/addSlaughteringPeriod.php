@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../core/settingsController.php';
 
 $settingsController = new settingsController();
@@ -11,30 +12,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $penId = $_POST['penId'] ?? null;
     $slaughteringDate = $_POST['slaughteringDate'] ?? null;
     $slaughteringTime = $_POST['slaughteringTime'] ?? null;
-    $schedType = 'Slaughtering';
-
+    $status = 'process';
     if (empty($selectedPigs) || empty($penId) || empty($slaughteringDate) || empty($slaughteringTime)) {
-        $error = "All fields are required!";
+        $_SESSION['error'] = "All fields are required!";
+        header('Location: slaughteringPeriod.php');
+        exit();
     } else {
         foreach ($selectedPigs as $pigId) {
-            $result = $settingsController->addSlaughteringPeriod($penId, $pigId, $slaughteringDate, $slaughteringTime);
+            $result = $settingsController->addSlaughteringPeriod($penId, $pigId, $slaughteringDate, $slaughteringTime, $status);
             if (!$result) {
                 $_SESSION['error'] = "Failed to add Slaughtering Period for pig ID: $pigId";
-                break;
-            }
-
-            $scheduleResult = $settingsController->addSlaughteringSched($penId, $slaughteringTime, $slaughteringDate, $schedType); // Add slaughtering schedule
-            if (!$scheduleResult) {
-                $_SESSION['error'] = "Failed to add to the Schedule for pig ID: $pigId";
                 break;
             }
         }
 
         if (!isset($_SESSION['error'])) {
             $_SESSION['success'] = 'Slaughtering Period and Schedule Successfully Added for selected pigs!';
+
+
+            $settingsController->sendNotification(
+                "New Slaughtering Schedule",
+                "A new slaughtering schedule has been added for the selected pigs. Please check for details."
+            );
         }
 
         header('Location: slaughteringPeriod.php');
         exit();
     }
+} else {
+    header('Location: slaughteringPeriod.php');
+    exit();
 }

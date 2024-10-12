@@ -8,15 +8,7 @@
 
 
 
-  require_once './core/notificationController.php';
 
-  $notificationController = new notificationController();
-
-
-  $currentTime = date('Y-m-d H:i:s');
-
-
-  $notifications = $notificationController->getNotification();
 
   ?>
 

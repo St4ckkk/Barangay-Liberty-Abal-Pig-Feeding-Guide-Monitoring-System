@@ -17,19 +17,22 @@ class SessionController
 
     public function userLogin()
     {
-        $query = "SELECT * FROM users WHERE username = :username";
+        $query = "SELECT * FROM useraccount WHERE username = :username";
         $params = [':username' => $_POST['username']];
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);
         $user = $stmt->fetch();
 
         if ($user && password_verify($_POST['password'], $user['password'])) {
-           
-            if ($user['status'] === 'active') { 
+            if ($user['status'] === 'active') {
                 $_SESSION['id'] = $user['id'];
                 $_SESSION['u'] = $user['username'];
                 $_SESSION['user'] = $user;
                 $_SESSION['logged_in'] = true;
+
+            
+                $_SESSION['role'] = $user['role']; 
+
                 header("Location: dashboard.php");
                 exit;
             } else {

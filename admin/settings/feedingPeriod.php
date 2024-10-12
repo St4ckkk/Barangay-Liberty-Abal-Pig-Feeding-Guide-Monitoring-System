@@ -1,18 +1,17 @@
 <?php
 require_once '../core/Database.php';
-require_once '../core/guidelinesController.php';
+require_once '../core/settingsController.php';
 require_once '../core/notificationController.php';
 
+$notificationController = new notificationController();
+$currentTime = date('Y-m-d H:i:s');
+$notifications = $notificationController->getNotification();
 if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
     header('Location: index.php');
     exit();
 }
 
-$notificationController = new notificationController();
-$currentTime = date('Y-m-d H:i:s');
-$notifications = $notificationController->getNotification();
-
-$guidelines = (new guidelinesController())->getDisinfectionGuidelines();
+$feedings = (new settingsController())->getFeedingPeriod();
 $success = '';
 $error = '';
 
@@ -25,7 +24,7 @@ $error = '';
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Cleaning Guidelines</title>
+    <title>Feeding Period</title>
     <meta content="Dashboard for pig feeding guide and monitoring" name="description">
     <meta content="pig, feeding, monitoring, dashboard" name="keywords">
 
@@ -62,17 +61,17 @@ $error = '';
 
     <main id="main" class="main" style="margin-top: 100px;">
         <div class="pagetitle">
-            <h1>Cleaning Guidelines</h1>
+            <h1>Feeding Period</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item">Guidelines</li>
-                    <li class="breadcrumb-item active">Cleaning</li>
+                    <li class="breadcrumb-item">Settings</li>
+                    <li class="breadcrumb-item active">Feeding</li>
                 </ol>
             </nav>
         </div>
 
-        <section class="section ">
+        <section class="section">
             <?php
             if (isset($_SESSION['error'])) {
                 echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>';
@@ -84,20 +83,21 @@ $error = '';
                 unset($_SESSION['success']);
             }
             ?>
+
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-8">
                     <div class="card">
                         <div class="card-header mb-2">
-                            <span>Cleaning Guidelines</span>
+                            <span>Feeding Period</span>
                         </div>
                         <div class="card-body">
                             <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
                                 <div class="datatable-top">
                                     <div class="datatable-dropdown">
                                         <div class="float-end">
-                                            <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addGuidelines">
+                                            <!-- <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addFeedModal">
                                                 Add <i class="bi bi-plus"></i>
-                                            </button>
+                                            </button> -->
                                         </div>
                                     </div>
                                     <div class="datatable-search">
@@ -108,31 +108,40 @@ $error = '';
                                     <table class="table datatable datatable-table">
                                         <thead>
                                             <tr>
-                                                <th data-sortable="true">Title</th>
-                                                <th data-sortable="true">Description</th>
-                                                <th data-sortable="true">Date</th>
-                                                <th>Action</th>
+                                                <th data-sortable="true">Feeding frequency</th>
+                                                <th data-sortable="true">Morning</th>
+                                                <th data-sortable="true">Afternoon</th>
+                                                <th data-sortable="true">Evening</th>
+                                                <th data-sortable="true">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php if (!empty($guidelines)) : ?>
-                                                <?php foreach ($guidelines as $guideline) : ?>
+                                            <?php if (!empty($feedings)) : ?>
+                                                <?php foreach ($feedings as $feeding) : ?>
                                                     <tr>
-                                                        <td><?= $guideline['title'] ?></td>
-                                                        <td><?= $guideline['description'] ?></td>
-                                                        <td><?= $guideline['guideDate'] ?></td>
+                                                        <td><?= $feeding['feeding_frequency'] ?></td>
                                                         <td>
-                                                            <a href="editDisinfectionGuidelines.php?id=<?= $guideline['guideId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
-                                                            <a href="deleteDisinfectionGuidelines.php?id=<?= $guideline['guideId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                            <?= !empty($feeding['morning_feeding_time']) ? date('h:i A', strtotime($feeding['morning_feeding_time'])) : 'N/A'; ?>
                                                         </td>
+                                                        <td>
+                                                            <?= !empty($feeding['noon_feeding_time']) ? date('h:i A', strtotime($feeding['noon_feeding_time'])) : 'N/A'; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?= !empty($feeding['evening_feeding_time']) ? date('h:i A', strtotime($feeding['evening_feeding_time'])) : 'N/A'; ?>
+                                                        </td>
+                                                        <td>
+                                                            <a href="editCleaningPeriod.php?id=<?= $user['schedId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+                                                            <a href="deleteCleaningPeriod.php?id=<?= $user['schedId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                        </td>
+                                                    <tr>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <tr>
+                                                        <td colspan="5">No Feeding Period found.</td>
                                                     </tr>
-                                                <?php endforeach; ?>
-                                            <?php else: ?>
-                                                <tr>
-                                                    <td colspan="5">No Guidelines found.</td>
-                                                </tr>
-                                            <?php endif; ?>
+                                                <?php endif; ?>
                                         </tbody>
+
                                     </table>
                                 </div>
                                 <div class="datatable-bottom">
@@ -154,35 +163,45 @@ $error = '';
                                     </nav>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="modal fade" id="addGuidelines" tabindex="-1" aria-labelledby="addPigModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addPigModalLabel">Add New Guidelines</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header mb-2">
+                            <i class="bi bi-plus-circle"></i> Add Feeding Period
                         </div>
-                        <div class="modal-body">
-                            <form action="addDisinfectionGuidelines.php" method="POST">
-                                <div class="row">
-                                    <div class="col-md-12 mb-3">
-                                        <label for="breedName" class="form-label">Title</label>
-                                        <input type="text" class="form-control" id="name" name="title" required>
-                                        <label for="breed" class="form-label">Description</label>
-                                        <textarea name="description" id="" class="form-control"></textarea>
+                        <div class="card-body">
+                            <form action="addFeedingPeriod.php" method="post">
+                                <div class="mb-3">
+                                    <label for="feedingFrequency" class="form-label">Feeding Frequency</label>
+                                    <select name="feedingFrequency" id="feedingFrequency" class="form-select">
+                                        <option value="once">Once a day</option>
+                                        <option value="twice">Twice a day</option>
+                                        <option value="thrice">Thrice a day</option>
+                                        <option value="custom">Custom</option>
+                                    </select>
+                                </div>
+                                <div id="feedingTimes">
+                                    <div class="mb-3">
+                                        <label for="morningTime" class="form-label">Morning Feeding Time</label>
+                                        <input type="time" name="morningTime" id="morningTime" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="noonTime" class="form-label">Afternoon Feeding Time</label>
+                                        <input type="time" name="noonTime" id="noonTime" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="eveningTime" class="form-label">Evening Feeding Time</label>
+                                        <input type="time" name="eveningTime" id="eveningTime" class="form-control">
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">Save</button>
+                                <button type="submit" class="btn btn-primary w-100">Submit</button>
                             </form>
                         </div>
                     </div>
                 </div>
-            </div>
+
         </section>
     </main>
 
@@ -199,6 +218,25 @@ $error = '';
     <script src="../assets/vendor/php-email-form/validate.js"></script>
 
     <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const feedingFrequency = document.getElementById('feedingFrequency');
+            const feedingTimes = document.getElementById('feedingTimes');
+            const morningTime = document.getElementById('morningTime');
+            const noonTime = document.getElementById('noonTime');
+            const eveningTime = document.getElementById('eveningTime');
+
+            function updateFeedingTimes() {
+                const frequency = feedingFrequency.value;
+                morningTime.parentElement.style.display = 'block';
+                noonTime.parentElement.style.display = frequency === 'thrice' || frequency === 'custom' ? 'block' : 'none';
+                eveningTime.parentElement.style.display = frequency === 'twice' || frequency === 'thrice' || frequency === 'custom' ? 'block' : 'none';
+            }
+
+            feedingFrequency.addEventListener('change', updateFeedingTimes);
+            updateFeedingTimes();
+        });
+    </script>
 </body>
 
 </html>

@@ -16,7 +16,6 @@ $success = '';
 $error = '';
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,8 +24,8 @@ $error = '';
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
     <title>Cleaning Period</title>
-    <meta content="Dashboard for pig feeding guide and monitoring" name="description">
-    <meta content="pig, feeding, monitoring, dashboard" name="keywords">
+    <meta content="Dashboard for pig cleaning schedule and monitoring" name="description">
+    <meta content="pig, cleaning, monitoring, dashboard" name="keywords">
 
     <link href="../assets/img/pig-logo.png" rel="icon">
     <link href="../assets/img/pig-logo.png" rel="apple-touch-icon">
@@ -42,7 +41,7 @@ $error = '';
     <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="../assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="../assets/css/global.css" rel="stylesheet">
 
     <style>
         .btn {
@@ -95,9 +94,7 @@ $error = '';
                                 <div class="datatable-top">
                                     <div class="datatable-dropdown">
                                         <div class="float-end">
-                                            <!-- <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addFeedModal">
-                                                Add <i class="bi bi-plus"></i>
-                                            </button> -->
+                                            <!-- Add button removed as in the original -->
                                         </div>
                                     </div>
                                     <div class="datatable-search">
@@ -108,28 +105,38 @@ $error = '';
                                     <table class="table datatable datatable-table">
                                         <thead>
                                             <tr>
-                                                <th data-sortable="true">Cleaning Time</th>
-                                                <th>Action</th>
+                                                <th data-sortable="true">Cleaning frequency</th>
+                                                <th data-sortable="true">Morning</th>
+                                                <th data-sortable="true">Afternoon</th>
+                                                <th data-sortable="true">Evening</th>
+                                                <th data-sortable="true">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php if (!empty($cleanings)) : ?>
                                                 <?php foreach ($cleanings as $cleaning) : ?>
                                                     <tr>
-                                                        <td><?= date('h:i A', strtotime($cleaning['schedTime'])) ?></td>
-
+                                                        <td><?= $cleaning['cleaning_frequency'] ?></td>
                                                         <td>
-                                                            <a href="editCleaningPeriod.php?id=<?php echo $user['schedId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
-                                                            <a href="deleteCleaningPeriod.php?id=<?php echo $user['schedId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                            <?= !empty($cleaning['morning_cleaning_time']) ? date('h:i A', strtotime($cleaning['morning_cleaning_time'])) : 'N/A'; ?>
                                                         </td>
-                                                    <tr>
-
-                                                    <?php endforeach; ?>
-                                                <?php else: ?>
-                                                    <tr>
-                                                        <td colspan="5">No Cleaning Period found.</td>
+                                                        <td>
+                                                            <?= !empty($cleaning['noon_cleaning_time']) ? date('h:i A', strtotime($cleaning['noon_cleaning_time'])) : 'N/A'; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?= !empty($cleaning['evening_cleaning_time']) ? date('h:i A', strtotime($cleaning['evening_cleaning_time'])) : 'N/A'; ?>
+                                                        </td>
+                                                        <td>
+                                                            <a href="editCleaningPeriod.php?id=<?= $cleaning['cleaning_id'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+                                                            <a href="deleteCleaningPeriod.php?id=<?= $cleaning['cleaning_id'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                        </td>
                                                     </tr>
-                                                <?php endif; ?>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="5">No Cleaning Period found.</td>
+                                                </tr>
+                                            <?php endif; ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -163,8 +170,27 @@ $error = '';
                         <div class="card-body">
                             <form action="addCleaningPeriod.php" method="post">
                                 <div class="mb-3">
-                                    <label for="feedingTime" class="form-label">Start Time</label>
-                                    <input type="time" name="schedTime" id="feedingTime" class="form-control">
+                                    <label for="cleaningFrequency" class="form-label">Cleaning Frequency</label>
+                                    <select name="cleaningFrequency" id="cleaningFrequency" class="form-select">
+                                        <option value="once">Once a day</option>
+                                        <option value="twice">Twice a day</option>
+                                        <option value="thrice">Thrice a day</option>
+                                        <option value="custom">Custom</option>
+                                    </select>
+                                </div>
+                                <div id="cleaningTimes">
+                                    <div class="mb-3">
+                                        <label for="morningTime" class="form-label">Morning Cleaning Time</label>
+                                        <input type="time" name="morningTime" id="morningTime" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="noonTime" class="form-label">Afternoon Cleaning Time</label>
+                                        <input type="time" name="noonTime" id="noonTime" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="eveningTime" class="form-label">Evening Cleaning Time</label>
+                                        <input type="time" name="eveningTime" id="eveningTime" class="form-control">
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Submit</button>
                             </form>
@@ -177,7 +203,6 @@ $error = '';
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-
     <script src="../assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/vendor/chart.js/chart.umd.js"></script>
@@ -188,6 +213,25 @@ $error = '';
     <script src="../assets/vendor/php-email-form/validate.js"></script>
 
     <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cleaningFrequency = document.getElementById('cleaningFrequency');
+            const cleaningTimes = document.getElementById('cleaningTimes');
+            const morningTime = document.getElementById('morningTime');
+            const noonTime = document.getElementById('noonTime');
+            const eveningTime = document.getElementById('eveningTime');
+
+            function updateCleaningTimes() {
+                const frequency = cleaningFrequency.value;
+                morningTime.parentElement.style.display = 'block';
+                noonTime.parentElement.style.display = frequency === 'thrice' || frequency === 'custom' ? 'block' : 'none';
+                eveningTime.parentElement.style.display = frequency === 'twice' || frequency === 'thrice' || frequency === 'custom' ? 'block' : 'none';
+            }
+
+            cleaningFrequency.addEventListener('change', updateCleaningTimes);
+            updateCleaningTimes();
+        });
+    </script>
 </body>
 
 </html>

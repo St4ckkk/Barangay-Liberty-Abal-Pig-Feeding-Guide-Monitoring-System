@@ -2,7 +2,7 @@
 return [
     'database' => [
         'host' => 'localhost',
-        'dbname' => 'pig-monitoring',
+        'dbname' => 'pgms',
         'username' => 'root',
         'password' => '',
         'charset' => 'utf8mb4'

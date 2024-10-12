@@ -1,3 +1,19 @@
+<?php
+
+$base_url = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/schedule';
+$base_url2 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/core/';
+$current_page = basename($_SERVER['PHP_SELF']);
+$userRole = isset($_SESSION['role']) ? $_SESSION['role'] : null;
+
+// Correct the path to notificationController.php
+require_once __DIR__ . '/../core/notificationController.php';
+
+$notificationController = new notificationController();
+$currentTime = date('Y-m-d H:i:s');
+
+$notifications = ($userRole === 'worker') ? $notificationController->getNotification() : [];
+
+?>
 
 
 <header id="header" class="header fixed-top d-flex align-items-center" style="background-color:#418091; padding: 10px 20px;">
@@ -14,7 +30,7 @@
             <span class="badge bg-primary badge-number"><?= count($notifications); ?></span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications" style="color: #000;">
-            <li class="dropdown-header">
+            <li class="dropdown-header" style="background: #418091;">
               <span class="messageCount"><?= count($notifications) ?> new notifications</span>
               <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
             </li>
@@ -25,25 +41,27 @@
             <?php if (empty($notifications)): ?>
               <li class="notification-item">
                 <div>No new notifications</div>
-              </li> 
+              </li>
             <?php else: ?>
               <?php foreach ($notifications as $notification): ?>
                 <li class="notification-item">
                   <div>
-                    <h4 style="color: #000;"><span><?= htmlspecialchars($notification['message']); ?></span></h4>
-                    <p><span>Scheduled Time: <?= htmlspecialchars($notification['schedTime']); ?></span></p>
+                    <a href="<?= $base_url ?>/notification.php?id=<?= urlencode($notification['id']); ?>" style="color: black; text-decoration: none;">
+                      <strong><?= htmlspecialchars($notification['title']); ?></strong>
+                      <p style="color: black; margin: 0;"><?= htmlspecialchars($notification['message']); ?></p>
+                    </a>
                   </div>
                 </li>
+
                 <li>
                   <hr class="dropdown-divider">
                 </li>
               <?php endforeach; ?>
             <?php endif; ?>
-
             <li class="dropdown-footer">
               <a href="#">Show all notifications</a>
             </li>
-          </ul><!-- End Notification Dropdown Items -->
+          </ul>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown" style="color: white;">

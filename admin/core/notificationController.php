@@ -12,19 +12,6 @@ class notificationController
         $this->db = $database->getConnection();
     }
 
-    public function addNotification($penId, $schedId, $message, $schedTime)
-    {
-        $query = "INSERT INTO notifications (penId, schedId, message, schedTime, status) 
-                  VALUES (:penId, :schedId, :message, :schedTime, 'pending')";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':penId', $penId);
-        $stmt->bindParam(':schedId', $schedId);
-        $stmt->bindParam(':message', $message);
-        $stmt->bindParam(':schedTime', $schedTime);
-
-        return $stmt->execute();
-    }
 
     public function getActiveNotifications($currentTime)
     {
@@ -71,5 +58,21 @@ class notificationController
         $stmt->bindParam(':cutoffDate', $cutoffDate);
 
         return $stmt->execute();
+    }
+    public function getNotificationById($id)
+    {
+        $sql = "SELECT n.*, f.feeding_frequency, f.morning_feeding_time, f.noon_feeding_time, f.evening_feeding_time
+FROM notifications n
+LEFT JOIN feeding_period f ON n.refId = f.feeding_id
+WHERE n.id = :id;
+";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        var_dump($result); // Debugging: Display the result to check the output
+        return $result;
     }
 }

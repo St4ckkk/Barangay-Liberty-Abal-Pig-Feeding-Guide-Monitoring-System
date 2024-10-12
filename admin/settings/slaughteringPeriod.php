@@ -4,9 +4,7 @@ require_once '../core/settingsController.php';
 require_once '../core/inventoryController.php';
 require_once '../core/notificationController.php';
 
-$notificationController = new notificationController();
-$currentTime = date('Y-m-d H:i:s');
-$notifications = $notificationController->getNotification();
+
 if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
     header('Location: index.php');
     exit();
@@ -29,6 +27,8 @@ $error = '';
     <title>Slaughtering Period</title>
     <meta content="Dashboard for pig feeding guide and monitoring" name="description">
     <meta content="pig, feeding, monitoring, dashboard" name="keywords">
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
     <link href="../assets/img/pig-logo.png" rel="icon">
     <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -37,7 +37,7 @@ $error = '';
     <link href="../assets/vendor/quill/quill.bubble.css" rel="stylesheet">
     <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="../assets/vendor/simple-datatables/style.css" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="../assets/css/global.css" rel="stylesheet">
 
     <style>
         .tag {
@@ -53,6 +53,12 @@ $error = '';
             margin-left: 5px;
             cursor: pointer;
             color: white;
+        }
+
+        .btn {
+            width: 60px;
+            padding: 2px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -91,74 +97,102 @@ $error = '';
                             <span>Slaughtering Period</span>
                         </div>
                         <div class="card-body">
-                            <div class="float-end">
-                                <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addSlaughteringModal">
-                                    Add <i class="bi bi-plus"></i>
-                                </button>
-                            </div>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Pen #</th>
-                                        <th scope="col">Pigs</th>
-                                        <th scope="col">Age</th>
-                                        <th scope="col">Weight</th>
-                                        <th scope="col">Slaughtering Date</th>
-                                        <th scope="col">Slaughtering Time</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (!empty($cleanings)) : ?>
-                                        <?php foreach ($cleanings as $cleaning) : ?>
+                            <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+                                <div class="datatable-top">
+                                    <div class="datatable-dropdown">
+                                        <div class="float-end">
+                                            <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addSlaughteringModal">
+                                                Add <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="datatable-search">
+                                        <input class="datatable-input" placeholder="Search..." type="search" name="search" title="Search within table">
+                                    </div>
+                                </div>
+                                <div class="datatable-container">
+                                    <table class="table datatable datatable-table">
+                                        <thead>
                                             <tr>
-                                                <td>
-                                                    <?= htmlspecialchars($cleaning['penno']) ?>
-                                                </td>
-                                                <td>
-                                                    <?= htmlspecialchars($cleaning['ear_tag_number']) ?>
-                                                </td>
-                                                <td><?= htmlspecialchars($cleaning['age']) ?></td>
-                                                <td><?= htmlspecialchars($cleaning['weight']) ?></td>
-                                                <td><?= htmlspecialchars($cleaning['slaughtering_date']) ?></td>
-                                                <td>
-                                                    <?php
-                                                    echo date("g:i A", strtotime($cleaning['slaughtering_time']));
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                    if ($cleaning['userStatus'] == 'process') {
-                                                        echo '<span class="badge bg-warning">In Process</span>';
-                                                    } elseif ($cleaning['userStatus'] == 'unprocess') {
-                                                        echo '<span class="badge bg-secondary">Unprocessed</span>';
-                                                    } elseif ($cleaning['userStatus'] == 'done') {
-                                                        echo '<span class="badge bg-success">Completed</span>';
-                                                    } else {
-                                                        echo '<span class="badge bg-light">Unknown Status</span>';
-                                                    }
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <a href="#" class="btn btn-primary" onclick="openEditModal('<?= $cleaning['slauId'] ?>', '<?= $cleaning['slaughtering_date'] ?>', '<?= $cleaning['slaughtering_time'] ?>', '<?= $cleaning['userStatus'] ?>')">
-                                                        <i class="bi bi-pencil"></i>
-                                                    </a>
-                                                    <a href="#" class="btn btn-danger" onclick="openDeleteConfirmation('<?= $cleaning['slauId'] ?>')">
-                                                        <i class="bi bi-trash"></i>
-                                                    </a>
-                                                </td>
-
+                                                <th data-sortable="true">Pen #</th>
+                                                <th data-sortable="true">ETN</th>
+                                                <th data-sortable="true">Age</th>
+                                                <th data-sortable="true">Weight (kg)</th>
+                                                <th data-sortable="true">Date</th>
+                                                <th data-sortable="true">Time</th>
+                                                <th data-sortable="true">Status</th>
+                                                <th>Action</th>
                                             </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="7">No Cleaning Period found.</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (!empty($cleanings)) : ?>
+                                                <?php foreach ($cleanings as $cleaning) : ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?= htmlspecialchars($cleaning['penno']) ?>
+                                                        </td>
+                                                        <td>
+                                                            <?= htmlspecialchars($cleaning['ear_tag_number']) ?>
+                                                        </td>
+                                                        <td><?= htmlspecialchars($cleaning['age']) ?></td>
+                                                        <td><?= htmlspecialchars($cleaning['weight']) ?></td>
+                                                        <td><?= htmlspecialchars($cleaning['slaughtering_date']) ?></td>
+                                                        <td>
+                                                            <?php
+                                                            echo date("g:i A", strtotime($cleaning['slaughtering_time']));
+                                                            ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php
+                                                            if ($cleaning['status'] == 'process') {
+                                                                echo '<span class="badge bg-warning">In Process</span>';
+                                                            } elseif ($cleaning['status'] == 'unprocess') {
+                                                                echo '<span class="badge bg-secondary">Unprocessed</span>';
+                                                            } elseif ($cleaning['status'] == 'done') {
+                                                                echo '<span class="badge bg-success">Completed</span>';
+                                                            } else {
+                                                                echo '<span class="badge bg-light">Unknown Status</span>';
+                                                            }
+                                                            ?>
+                                                        </td>
+                                                        <td>
+                                                            <a href="#" class="btn btn-primary" onclick="openEditModal('<?= $cleaning['slauId'] ?>', '<?= $cleaning['slaughtering_date'] ?>', '<?= $cleaning['slaughtering_time'] ?>', '<?= $cleaning['status'] ?>')">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
+                                                            <a href="#" class="btn btn-danger" onclick="openDeleteConfirmation('<?= $cleaning['slauId'] ?>')">
+                                                                <i class="bi bi-trash"></i>
+                                                            </a>
+                                                        </td>
 
-                            </table>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="7">No Cleaning Period found.</td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="datatable-bottom">
+                                    <div class="datatable-info">Showing 1 to 10 of 100 entries</div>
+                                    <nav class="datatable-pagination">
+                                        <ul class="datatable-pagination-list">
+                                            <li class="datatable-pagination-list-item datatable-hidden datatable-disabled"><button data-page="1" class="datatable-pagination-list-item-link" aria-label="Page 1">‹</button></li>
+                                            <li class="datatable-pagination-list-item datatable-active"><button data-page="1" class="datatable-pagination-list-item-link" aria-label="Page 1">1</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="2" class="datatable-pagination-list-item-link" aria-label="Page 2">2</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="3" class="datatable-pagination-list-item-link" aria-label="Page 3">3</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="4" class="datatable-pagination-list-item-link" aria-label="Page 4">4</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="5" class="datatable-pagination-list-item-link" aria-label="Page 5">5</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="6" class="datatable-pagination-list-item-link" aria-label="Page 6">6</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="7" class="datatable-pagination-list-item-link" aria-label="Page 7">7</button></li>
+                                            <li class="datatable-pagination-list-item datatable-ellipsis datatable-disabled"><button class="datatable-pagination-list-item-link">…</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="10" class="datatable-pagination-list-item-link" aria-label="Page 10">10</button></li>
+                                            <li class="datatable-pagination-list-item"><button data-page="2" class="datatable-pagination-list-item-link" aria-label="Page 2">›</button></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -245,6 +279,7 @@ $error = '';
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -350,7 +385,7 @@ $error = '';
         }
 
         function openDeleteConfirmation(slauId) {
-            document.getElementById('confirmDeleteBtn').href = 'deleteSlaughtering.php?id=' + slauId;
+            document.getElementById('confirmDeleteBtn').href = 'deleteSlaughtering.php?slauId=' + slauId;
 
             var deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
             deleteModal.show();
