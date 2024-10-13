@@ -258,6 +258,61 @@ class inventoryController
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function updateFeedStocks($id, $feedsName, $feedsDescription, $feedsCost, $feed_purchase_date, $QtyOfFoodPerSack)
+    {
+        $query = "UPDATE feedstock SET feedsName = :feedsName, feedsDescription = :feedsDescription, feedsCost = :feedsCost, feed_purchase_date = :feed_purchase_date, QtyOFoodPerSack = :QtyOFoodPerSack WHERE id = :id";
+        $params = [
+            ':id' => $id,
+            ':feedsName' => $feedsName,
+            ':feedsDescription' => $feedsDescription,
+            ':feedsCost' => $feedsCost,
+            ':feed_purchase_date' => $feed_purchase_date,
+            ':QtyOFoodPerSack' => $QtyOfFoodPerSack
+        ];
 
-    
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
+    }
+
+    public function deleteFeedStocks($id)
+    {
+        $query = "DELETE FROM feedstock WHERE id = :id";
+        $params = [
+            ':id' => $id
+        ];
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
+    }
+
+    public function updatePen($penId, $penno, $penStatus, $pigCount)
+    {
+        $query = "UPDATE pigpen SET penno = :penno, penStatus = :penStatus, pigCount = :pigCount WHERE penId = :penId";
+        $params = [
+            ':penId' => $penId,
+            ':penno' => $penno,
+            ':penStatus' => $penStatus,
+            ':pigCount' => $pigCount
+        ];
+
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
+    }
+
+    public function deletePen($penId)
+    {
+
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM pigs WHERE penId = ?");
+        $stmt->execute([$penId]);
+        $count = $stmt->fetchColumn();
+
+        if ($count > 0) {
+
+            $_SESSION['error'] = 'Cannot delete pen: there are pigs in this pen.';
+            return false;
+        }
+
+
+        $stmt = $this->db->prepare("DELETE FROM pigpen WHERE penId = ?");
+        return $stmt->execute([$penId]);
+    }
 }

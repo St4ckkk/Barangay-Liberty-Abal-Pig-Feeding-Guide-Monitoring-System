@@ -377,4 +377,7 @@ class settingsController
         }
         return $stmt->execute($params);
     }
+
+
+    
 }
