@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 "Feeding Schedule Updated",
                 "A feeding schedule has been updated. Please check for details.",
                 $id,
-                "Feeding Schedule",
+                "feeding",
                 true
             );
 

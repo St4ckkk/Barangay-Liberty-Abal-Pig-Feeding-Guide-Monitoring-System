@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $title = "Slaughtering Schedule Update";
             $message = "The slaughtering schedule has been updated to: Date - $slaughteringDate, Time - $slaughteringTime.";
             $refId = $slauId;  // Assuming slaughtering ID is used as a reference ID
-            $actionType = "Slaughtering Schedule";  // You can define action types like 'create', 'update', etc.
+            $actionType = "slaughter";  // You can define action types like 'create', 'update', etc.
             $isUpdate = true;  // Since this is an update operation
 
             // Send notification

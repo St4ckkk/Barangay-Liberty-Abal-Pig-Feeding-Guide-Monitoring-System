@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 "Cleaning Schedule Updated",
                 "A cleaning schedule has been updated. Please check for details.",
                 $id,
-                "Cleaning Schedule",
+                "cleaning",
                 true
             );
 

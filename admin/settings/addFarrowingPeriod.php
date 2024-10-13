@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             "New Farrowing Schedule",
             "A new Farrowing schedule has been added. Please check for details.",
             $result,
-            "Farrowing"
+            "farrowing"
         );
         $_SESSION['success'] = $success;
     } else {

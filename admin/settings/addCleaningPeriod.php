@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 "New Cleaning Schedule",
                 "A new cleaning schedule has been added. Please check for details.",
                 $success,
-                "Cleaning Schedule"
+                "cleaning"
 
             );
             $_SESSION['success'] = "Cleaning schedule added successfully.";
