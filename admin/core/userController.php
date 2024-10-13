@@ -30,11 +30,43 @@ class userController
     }
 
 
-    public function getAllUsers() {
+    public function getAllUsers()
+    {
 
         $query = "SELECT * FROM useraccount";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
+    }
+
+
+    public function editUser($userId, $username, $role, $status)
+    {
+        $query = "UPDATE useraccount SET username = :username, role = :role, status = :status WHERE userId = :userId";
+        $params = [
+            ':username' => $username,
+            ':role' => $role,
+            ':status' => $status,
+            ':userId' => $userId
+        ];
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+        return $stmt;
+    }
+
+
+    public function deleteUser($userId)
+    {
+
+        $deleteNotificationsQuery = "DELETE FROM notifications WHERE userId = :userId";
+        $deleteStmt = $this->db->prepare($deleteNotificationsQuery);
+        $deleteStmt->execute([':userId' => $userId]);
+
+        $query = "DELETE FROM useraccount WHERE userId = :userId";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([':userId' => $userId]);
+
+        return $stmt;
     }
 }

@@ -15,7 +15,7 @@ class settingsController
     }
 
 
-    public function sendNotification($title, $message, $refId)
+    public function sendNotification($title, $message, $refId, $actiontype)
     {
         try {
 
@@ -25,7 +25,7 @@ class settingsController
             $activeWorkers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (!empty($activeWorkers)) {
-                $insertQuery = "INSERT INTO notifications (title, message, userId, refId) VALUES (:title, :message, :userId, :refId)";
+                $insertQuery = "INSERT INTO notifications (title, message, userId, refId, actionType) VALUES (:title, :message, :userId, :refId, :actionType)";
                 $stmtInsert = $this->db->prepare($insertQuery);
 
                 foreach ($activeWorkers as $worker) {
@@ -33,7 +33,8 @@ class settingsController
                         ':title' => $title,
                         ':message' => $message,
                         ':userId' => $worker['userId'],
-                        ':refId' => $refId
+                        ':refId' => $refId,
+                        ':actionType' => $actiontype
                     ]);
                 }
                 return true;
@@ -45,13 +46,12 @@ class settingsController
             return false;
         }
     }
-    
+
     public function addFeedingPeriod($feedingFrequency, $morningTime = null, $noonTime = null, $eveningTime = null): ?int
     {
-        // Prepare the SQL query for inserting a feeding period
         $query = "INSERT INTO feeding_period (feeding_frequency, morning_feeding_time, noon_feeding_time, evening_feeding_time) VALUES (:frequency, :morning, :noon, :evening)";
 
-        // Set up the parameters for the SQL statement
+
         $params = [
             ':frequency' => $feedingFrequency,
             ':morning' => $morningTime,
@@ -59,28 +59,27 @@ class settingsController
             ':evening' => $eveningTime,
         ];
 
-        // Adjust parameters based on feeding frequency
+
         switch ($feedingFrequency) {
             case 'once':
-                $params[':noon'] = null; // Set noon to null
-                $params[':evening'] = null; // Set evening to null
+                $params[':noon'] = null;
+                $params[':evening'] = null;
                 break;
             case 'twice':
-                $params[':noon'] = null; // Set noon to null
+                $params[':noon'] = null;
                 break;
             case 'thrice':
             case 'custom':
-                break; // All parameters are already set
+                break;
         }
 
-        // Prepare and execute the SQL statement
+
         $stmt = $this->db->prepare($query);
         if ($stmt->execute($params)) {
-            // Return the ID of the newly inserted feeding period
-            return (int)$this->db->lastInsertId(); // Return as an integer
+            return (int)$this->db->lastInsertId();
         }
 
-        return null; // Return null if the insertion failed
+        return null;
     }
 
     public function addSlaughteringSched($penId, $schedTime, $schedDate, $schedType)
@@ -92,27 +91,12 @@ class settingsController
             ':schedDate' => $schedDate,
             ':schedType' => $schedType
         ];
-        
+
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);
     }
-    
-    public function addSchedForFeedingTime($penId = null, $schedTime, $schedType, $status)
-    {
-        $query = "INSERT INTO schedule (penId, schedTime, schedType, status) VALUES (:penId, :schedTime, :schedType, :status)";
-        $params = [
-            ':penId' => $penId,
-            ':schedTime' => $schedTime,
-            ':schedType' => $schedType,
-            ':status' => $status
-        ];
 
-        $stmt = $this->db->prepare($query);
-        if ($stmt->execute($params)) {
-            return $this->db->lastInsertId();
-        }
-        return false;
-    }
+
 
 
 
@@ -140,6 +124,9 @@ class settingsController
         }
 
         $stmt = $this->db->prepare($query);
+        if ($stmt->execute($params)) {
+            return (int)$this->db->lastInsertId();
+        }
         return $stmt->execute($params);
     }
 
@@ -157,6 +144,9 @@ class settingsController
         ];
 
         $stmt = $this->db->prepare($query);
+        if ($stmt->execute($params)) {
+            return (int)$this->db->lastInsertId();
+        }
         return $stmt->execute($params);
     }
 
@@ -382,6 +372,9 @@ class settingsController
         ];
 
         $stmt = $this->db->prepare($query);
+        if ($stmt->execute($params)) {
+            return (int)$this->db->lastInsertId();
+        }
         return $stmt->execute($params);
     }
 }

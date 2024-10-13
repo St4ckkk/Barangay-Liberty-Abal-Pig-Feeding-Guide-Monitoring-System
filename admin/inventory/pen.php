@@ -118,8 +118,17 @@ $error = '';
             background-color: #4CAF50;
         }
 
+        .btn-edit {
+            background-color: #0d6efd;
+        }
+
+        .btn-edit:hover {
+            background-color: #0d6efd;
+        }
+
         .btn-add:hover {
             background-color: #45a049;
+            color: #000;
         }
 
         .btn-delete {
@@ -186,7 +195,8 @@ $error = '';
                                                 <a href="pigs.php?penId=<?php echo urlencode($pen['penId']); ?>">
                                                     <button class="btn btn-add">View</button>
                                                 </a>
-                                                <button class="btn btn-delete" onclick="confirmDelete(<?php echo $pen['penId']; ?>)">Delete</button>
+                                                <button class="btn btn-edit" onclick="openEditModal(<?php echo htmlspecialchars(json_encode($pen)); ?>)">Edit</button>
+                                                <button class="btn btn-delete" onclick="openDeleteModal(<?php echo $pen['penId']; ?>)">Delete</button>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
@@ -228,12 +238,77 @@ $error = '';
                 </div>
         </section>
     </main>
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editPenModal" tabindex="-1" aria-labelledby="editPenModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPenModalLabel">Edit Pig Pen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPenForm" action="editPigPen.php" method="post">
+                        <input type="hidden" name="penId" id="editPenId">
+                        <div class="mb-3">
+                            <label for="editPenNo" class="form-label">Pen #</label>
+                            <input type="text" class="form-control" id="editPenNo" name="penno" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCapacity" class="form-label">Capacity</label>
+                            <input type="number" class="form-control" id="editCapacity" name="penpigcount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Pen Status</label>
+                            <select name="penstatus" id="editStatus" class="form-control" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deletePenModal" tabindex="-1" aria-labelledby="deletePenModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deletePenModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this pen?</p>
+                    <form id="deletePenForm" action="deletePen.php" method="post">
+                        <input type="hidden" name="penId" id="deletePenId">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
-        function confirmDelete(penId) {
-            if (confirm('Are you sure you want to delete this pen?')) {
-                window.location.href = 'deletePen.php?id=' + penId; // Adjust to your delete logic
-            }
+        function openEditModal(pen) {
+            document.getElementById('editPenId').value = pen.penId;
+            document.getElementById('editPenNo').value = pen.penno;
+            document.getElementById('editCapacity').value = pen.pigcount;
+            document.getElementById('editStatus').value = pen.penstatus;
+            var editModal = new bootstrap.Modal(document.getElementById('editPenModal'));
+            editModal.show();
+        }
+
+        function openDeleteModal(penId) {
+            document.getElementById('deletePenId').value = penId;
+            var deleteModal = new bootstrap.Modal(document.getElementById('deletePenModal'));
+            deleteModal.show();
         }
     </script>
 

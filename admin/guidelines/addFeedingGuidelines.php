@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 require_once '../core/guidelinesController.php';
 
 $guideline = new guidelinesController();
@@ -7,19 +7,24 @@ $success = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $title = $_POST['title'] ?? '';
+    $pigStage = $_POST['pigStage'] ?? '';
+    $weightRange = $_POST['weightRange'] ?? '';
+    $feedType = $_POST['feedType'] ?? '';
+    $proteinContent = $_POST['proteinContent'] ?? '';
+    $feedingFrequency = $_POST['feedingFrequency'] ?? '';
+    $amountPerFeeding = $_POST['amountPerFeeding'] ?? '';
+    $specialInstructions = $_POST['specialInstructions'] ?? '';
 
-    $title = $_POST['title'] ?? null;
-    $description = $_POST['description'] ?? null;
-
-    if (empty($title) || empty($description)) {
-        $_SESSION['error'] = "All fields are required!";
-    }
-
-    $result = $guideline->addFeedingGuidelines($title, $description);
-    if ($result) {
-        $_SESSION['success'] = "Guideline created successfully!";
+    if (empty($title) || empty($pigStage) || empty($feedType) || empty($proteinContent) || empty($amountPerFeeding)) {
+        $_SESSION['error'] = "Title, Pig Stage, Feed Type, Protein Content, and Amount per Feeding are required!";
     } else {
-        $_SESSION['error'] = "Failed to add guideline";
+        $result = $guideline->addFeedingGuidelines($title, $pigStage, $weightRange, $feedType, $proteinContent, $feedingFrequency, $amountPerFeeding, $specialInstructions);
+        if ($result) {
+            $_SESSION['success'] = "Guideline created successfully!";
+        } else {
+            $_SESSION['error'] = "Failed to add guideline";
+        }
     }
     header('Location: feeding-guidelines.php');
     exit();

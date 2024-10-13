@@ -2,6 +2,7 @@
 
 $base_url = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/schedule';
 $base_url2 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/core/';
+$base_url3 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/';
 $current_page = basename($_SERVER['PHP_SELF']);
 $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : null;
 
@@ -104,7 +105,7 @@ $notifications = ($userRole === 'worker') ? $notificationController->getNotifica
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
+              <a class="dropdown-item d-flex align-items-center" href="./logout.php">
                 <i class="bi bi-box-arrow-right"></i>
                 <span style="color: #444444;">Sign Out</span>
               </a>

@@ -130,9 +130,14 @@ $error = '';
                                                             <?= !empty($feeding['evening_feeding_time']) ? date('h:i A', strtotime($feeding['evening_feeding_time'])) : 'N/A'; ?>
                                                         </td>
                                                         <td>
-                                                            <a href="editCleaningPeriod.php?id=<?= $user['schedId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
-                                                            <a href="deleteCleaningPeriod.php?id=<?= $user['schedId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                            <button class="btn btn-primary editBtn" data-id="<?= $feeding['feeding_id'] ?>" data-morning="<?= $feeding['morning_feeding_time'] ?>" data-noon="<?= $feeding['noon_feeding_time'] ?>" data-evening="<?= $feeding['evening_feeding_time'] ?>" data-bs-toggle="modal" data-bs-target="#editModal">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button class="btn btn-danger deleteBtn" data-id="<?= $feeding['feeding_id'] ?>" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
                                                         </td>
+
                                                     <tr>
                                                     <?php endforeach; ?>
                                                 <?php else: ?>
@@ -204,6 +209,61 @@ $error = '';
 
         </section>
     </main>
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Feeding Period</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" action="editFeedingPeriod.php" method="POST">
+                        <input type="hidden" name="id" id="editId">
+                        <div class="mb-3">
+                            <label for="editMorningTime" class="form-label">Morning Feeding Time</label>
+                            <input type="time" name="morningTime" id="editMorningTime" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editNoonTime" class="form-label">Afternoon Feeding Time</label>
+                            <input type="time" name="noonTime" id="editNoonTime" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEveningTime" class="form-label">Evening Feeding Time</label>
+                            <input type="time" name="eveningTime" id="editEveningTime" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="editForm">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Feeding Period</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this feeding period?
+                </div>
+                <div class="modal-footer">
+                    <form id="deleteForm" action="deleteFeedingPeriod.php" method="POST">
+                        <input type="hidden" name="id" id="deleteId">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -235,6 +295,33 @@ $error = '';
 
             feedingFrequency.addEventListener('change', updateFeedingTimes);
             updateFeedingTimes();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Edit button click handler
+            const editButtons = document.querySelectorAll('.editBtn');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const morning = this.getAttribute('data-morning');
+                    const noon = this.getAttribute('data-noon');
+                    const evening = this.getAttribute('data-evening');
+
+                    document.getElementById('editId').value = id;
+                    document.getElementById('editMorningTime').value = morning;
+                    document.getElementById('editNoonTime').value = noon;
+                    document.getElementById('editEveningTime').value = evening;
+                });
+            });
+
+            // Delete button click handler
+            const deleteButtons = document.querySelectorAll('.deleteBtn');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    document.getElementById('deleteId').value = id;
+                });
+            });
         });
     </script>
 </body>

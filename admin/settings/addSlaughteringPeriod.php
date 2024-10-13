@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         foreach ($selectedPigs as $pigId) {
             $result = $settingsController->addSlaughteringPeriod($penId, $pigId, $slaughteringDate, $slaughteringTime, $status);
+
             if (!$result) {
                 $_SESSION['error'] = "Failed to add Slaughtering Period for pig ID: $pigId";
                 break;
@@ -28,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!isset($_SESSION['error'])) {
             $_SESSION['success'] = 'Slaughtering Period and Schedule Successfully Added for selected pigs!';
-
-
             $settingsController->sendNotification(
                 "New Slaughtering Schedule",
-                "A new slaughtering schedule has been added for the selected pigs. Please check for details."
+                "A new slaughtering schedule has been added. Please check for details.",
+                $result,
+                "slaughtering"
             );
         }
 

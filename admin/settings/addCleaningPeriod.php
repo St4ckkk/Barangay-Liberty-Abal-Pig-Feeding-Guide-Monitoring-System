@@ -40,7 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($success) {
             $settingsController->sendNotification(
                 "New Cleaning Schedule",
-                "A new cleaning schedule has been added. Please check for details."
+                "A new cleaning schedule has been added. Please check for details.",
+                $success,
+                "Cleaning"
+
             );
             $_SESSION['success'] = "Cleaning schedule added successfully.";
         } else {

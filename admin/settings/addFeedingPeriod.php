@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $noonTime = filter_var($noonTime, FILTER_SANITIZE_SPECIAL_CHARS);
     $eveningTime = filter_var($eveningTime, FILTER_SANITIZE_SPECIAL_CHARS);
 
+    
     try {
         $feeding_id = $settingsController->addFeedingPeriod($frequency, $morningTime, $noonTime, $eveningTime);
 
@@ -42,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 "New Feeding Schedule",     
                 "A new Feeding schedule has been added. Please check for details.",
                 $feeding_id,
+                ""
             );
             $_SESSION['success'] = "Feeding schedule added successfully.";
         } else {

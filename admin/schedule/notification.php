@@ -94,7 +94,6 @@ if ($notificationId) {
                                                 <th>Morning Feeding Time</th>
                                                 <th>Noon Feeding Time</th>
                                                 <th>Evening Feeding Time</th>
-                                                <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -106,8 +105,8 @@ if ($notificationId) {
                                                     <td><?= formatTime($notificationData['noon_feeding_time']); ?></td>
                                                     <td><?= formatTime($notificationData['evening_feeding_time']); ?></td>
                                                     <td>
-                                                        <a href="edit_notification.php?id=<?= $notificationData['id']; ?>" class="btn btn-primary">Edit</a>
-                                                        <a href="delete_notification.php?id=<?= $notificationData['id']; ?>" class="btn btn-danger">Delete</a>
+                                                        <a href="edit_notification.php?id=<?= $notificationData['id']; ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+                                                        <a href="delete_notification.php?id=<?= $notificationData['id']; ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                                                     </td>
                                                 </tr>
                                             <?php else: ?>
@@ -115,13 +114,11 @@ if ($notificationId) {
                                                     <td colspan="6">No Notification Found</td>
                                                 </tr>
                                             <?php endif; ?>
-
                                             <?php
-                                            // Function to format time from 24-hour to 12-hour AM/PM format
                                             function formatTime($time)
                                             {
                                                 if ($time) {
-                                                    // Convert time string to a DateTime object
+
                                                     $dateTime = DateTime::createFromFormat('H:i:s', $time);
                                                     return $dateTime ? $dateTime->format('h:i A') : 'N/A';
                                                 }

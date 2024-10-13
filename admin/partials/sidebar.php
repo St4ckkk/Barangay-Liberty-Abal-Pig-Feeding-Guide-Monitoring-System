@@ -17,7 +17,7 @@ $is_inventory_active = in_array($current_page, $inventory_pages);
 
 $settings_pages = ['feedingPeriod.php', 'biv.php', 'cleaningPeriod.php', 'harvestTime.php', 'slaughteringPeriod.php', 'farrowingPeriod.php'];
 $is_settings_active = in_array($current_page, $settings_pages);
-$schedule_pages = ['feedingSchedule.php', 'cleaningSchedule.php'];
+$schedule_pages = ['feedingSchedule.php', 'cleaningSchedule.php', 'cleaningSchedule.php', 'slaughteringSchedule.php', 'farrowingSchedule.php'];
 $is_schedule_active = in_array($current_page, $schedule_pages);
 ?>
 
@@ -95,10 +95,10 @@ $is_schedule_active = in_array($current_page, $schedule_pages);
         <?php endif; ?>
 
         <li class="nav-item">
-            <a class="nav-link <?php echo $is_schedule_active ? '' : 'collapsed'; ?> <?php echo $is_schedule_active ? 'active' : ''; ?>" data-bs-target="#settings-nav" data-bs-toggle="collapse" href="#" aria-expanded="<?php echo $is_settings_active ? 'true' : 'false'; ?>">
+            <a class="nav-link <?php echo $is_schedule_active ? '' : 'collapsed'; ?> <?php echo $is_schedule_active ? 'active' : ''; ?>" data-bs-target="#schedule-nav" data-bs-toggle="collapse" href="#" aria-expanded="<?php echo $is_schedule_active ? 'true' : 'false'; ?>">
                 <i class="bi bi-clock"></i><span>Schedule</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
-            <ul id="settings-nav" class="nav-content collapse <?php echo $is_schedule_active ? 'show' : ''; ?>" data-bs-parent="#sidebar-nav">
+            <ul id="schedule-nav" class="nav-content collapse <?php echo $is_schedule_active ? 'show' : ''; ?>" data-bs-parent="#sidebar-nav">
                 <li>
                     <a href="<?php echo $base_url_schedule; ?>feedingSchedule.php" class="<?php echo ($current_page == 'feedingPeriod.php') ? 'active' : ''; ?>">
                         <span>Feeding Schedule</span>
@@ -107,6 +107,21 @@ $is_schedule_active = in_array($current_page, $schedule_pages);
                 <li>
                     <a href="<?php echo $base_url_schedule; ?>cleaningSchedule.php" class="<?php echo ($current_page == 'cleaningPeriod.php') ? 'active' : ''; ?>">
                         <span>Cleaning Schedule</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo $base_url_schedule; ?>cleaningSchedule.php" class="<?php echo ($current_page == 'cleaningPeriod.php') ? 'active' : ''; ?>">
+                        <span>Cleaning Schedule</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo $base_url_schedule; ?>slaughteringSchedule.php" class="<?php echo ($current_page == 'cleaningPeriod.php') ? 'active' : ''; ?>">
+                        <span>Slaughtering Schedule</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo $base_url_schedule; ?>farrowingSchedule.php" class="<?php echo ($current_page == 'cleaningPeriod.php') ? 'active' : ''; ?>">
+                        <span>Farrowing Schedule</span>
                     </a>
                 </li>
             </ul>

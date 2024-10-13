@@ -30,8 +30,8 @@ class SessionController
                 $_SESSION['user'] = $user;
                 $_SESSION['logged_in'] = true;
 
-            
-                $_SESSION['role'] = $user['role']; 
+
+                $_SESSION['role'] = $user['role'];
 
                 header("Location: dashboard.php");
                 exit;
@@ -41,5 +41,31 @@ class SessionController
         } else {
             echo "Invalid username or password.";
         }
+    }
+
+
+    public function logout()
+    {
+
+        $_SESSION = array();
+
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+        session_destroy();
+
+
+        header("Location: ./index.php");
+        exit();
     }
 }

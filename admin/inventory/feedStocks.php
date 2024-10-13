@@ -128,9 +128,20 @@ $error = '';
                                                         <td><?= $inventory['feed_purchase_date'] ?></td>
                                                         <td><?= $inventory['feedsDescription'] ?></td>
                                                         <td>
-                                                            <a href="editFeeds.php?id=<?= $inventory['id'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
-                                                            <a href="deleteFeeds.php?id=<?= $inventory['id'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                            <button type="button" class="btn btn-primary editFeedBtn" data-bs-toggle="modal" data-bs-target="#editFeedModal"
+                                                                data-id="<?= $inventory['id'] ?>"
+                                                                data-name="<?= $inventory['feedsName'] ?>"
+                                                                data-quantity="<?= $inventory['QtyOFoodPerSack'] ?>"
+                                                                data-cost="<?= $inventory['feedsCost'] ?>"
+                                                                data-date="<?= $inventory['feed_purchase_date'] ?>"
+                                                                data-description="<?= $inventory['feedsDescription'] ?>">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-danger deleteFeedBtn" data-bs-toggle="modal" data-bs-target="#deleteFeedModal" data-id="<?= $inventory['id'] ?>">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
                                                         </td>
+
                                                     </tr>
                                                 <?php endforeach; ?>
                                             <?php else: ?>
@@ -214,6 +225,65 @@ $error = '';
             </div>
         </div>
     </div>
+    <!-- Modal for Editing Feeds -->
+    <div class="modal fade" id="editFeedModal" tabindex="-1" aria-labelledby="editFeedModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editFeedModalLabel">Edit Feeds</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editFeedForm" action="editFeeds.php" method="POST">
+                        <input type="hidden" id="editFeedId" name="feedId">
+                        <div class="mb-3">
+                            <label for="editFeedName" class="form-label">Feed Name</label>
+                            <input type="text" class="form-control" id="editFeedName" name="feedName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editQuantityPerSack" class="form-label">Quantity Per Sack</label>
+                            <input type="number" class="form-control" id="editQuantityPerSack" name="QtyOFoodPerSack" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editFeedCost" class="form-label">Feeds Cost</label>
+                            <input type="number" class="form-control" id="editFeedCost" name="feedCost" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPurchaseDate" class="form-label">Purchased Date</label>
+                            <input type="date" class="form-control" id="editPurchaseDate" name="purchasedDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editFeedDescription" class="form-label">Feed Description</label>
+                            <textarea class="form-control" id="editFeedDescription" name="feedDescription" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for Deleting Feeds -->
+    <div class="modal fade" id="deleteFeedModal" tabindex="-1" aria-labelledby="deleteFeedModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteFeedModalLabel">Delete Feed</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this feed?</p>
+                </div>
+                <div class="modal-footer">
+                    <form id="deleteFeedForm" action="deleteFeeds.php" method="POST">
+                        <input type="hidden" id="deleteFeedId" name="feedId">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -227,6 +297,38 @@ $error = '';
     <script src="../assets/vendor/php-email-form/validate.js"></script>
 
     <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Edit Feed Modal
+            const editButtons = document.querySelectorAll('.editFeedBtn');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const feedId = this.dataset.id;
+                    const feedName = this.dataset.name;
+                    const quantity = this.dataset.quantity;
+                    const cost = this.dataset.cost;
+                    const purchaseDate = this.dataset.date;
+                    const description = this.dataset.description;
+
+                    document.getElementById('editFeedId').value = feedId;
+                    document.getElementById('editFeedName').value = feedName;
+                    document.getElementById('editQuantityPerSack').value = quantity;
+                    document.getElementById('editFeedCost').value = cost;
+                    document.getElementById('editPurchaseDate').value = purchaseDate;
+                    document.getElementById('editFeedDescription').value = description;
+                });
+            });
+
+            // Delete Feed Modal
+            const deleteButtons = document.querySelectorAll('.deleteFeedBtn');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const feedId = this.dataset.id;
+                    document.getElementById('deleteFeedId').value = feedId;
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

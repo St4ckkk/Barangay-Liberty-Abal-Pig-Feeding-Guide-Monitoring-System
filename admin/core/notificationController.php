@@ -62,17 +62,16 @@ class notificationController
     public function getNotificationById($id)
     {
         $sql = "SELECT n.*, f.feeding_frequency, f.morning_feeding_time, f.noon_feeding_time, f.evening_feeding_time
-FROM notifications n
-LEFT JOIN feeding_period f ON n.refId = f.feeding_id
-WHERE n.id = :id;
-";
+                FROM notifications n
+                LEFT JOIN feeding_period f ON n.refId = f.feeding_id
+                WHERE n.id = :id;
+                ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        var_dump($result); // Debugging: Display the result to check the output
         return $result;
     }
 }

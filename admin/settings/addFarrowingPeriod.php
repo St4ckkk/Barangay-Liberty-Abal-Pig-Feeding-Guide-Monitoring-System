@@ -23,23 +23,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['error'] = $error;
         header("Location: farrowingPeriod.php");
         exit();
-    } 
+    }
 
-    // Call the addFarrowingPeriod method with proper data
+
     $result = $settings->addFarrowingPeriod(
-        $damId, // pigId (assuming this is the damId in your context)
-        $penId, 
-        $breedingDate, 
-        $expectedFarrowingDate, 
-        $sireId, 
-        $pregnancyStatus, 
-        $healthStatus, 
-        $litterSize, 
+        $damId,
+        $penId,
+        $breedingDate,
+        $expectedFarrowingDate,
+        $sireId,
+        $pregnancyStatus,
+        $healthStatus,
+        $litterSize,
         $notes
     );
 
     if ($result) {
         $success = "Farrowing period added successfully.";
+        $settings->sendNotification(
+            "New Farrowing Schedule",
+            "A new Farrowing schedule has been added. Please check for details.",
+            $result,
+            "Farrowing"
+        );
         $_SESSION['success'] = $success;
     } else {
         $error = "Failed to add farrowing period. Please try again.";
@@ -50,4 +56,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header("Location: farrowingPeriod.php");
     exit();
 }
-?>

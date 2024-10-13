@@ -136,14 +136,14 @@ class inventoryController
 
     public function addPigs($etn, $penId, $status, $gender, $breed, $pigType, $weight, $age, $notes)
     {
-        
+
         $checkQuery = "SELECT COUNT(*) FROM pigs WHERE ear_tag_number = :ear_tag_number";
         $checkStmt = $this->db->prepare($checkQuery);
         $checkStmt->execute([':ear_tag_number' => $etn]);
         $duplicateCount = $checkStmt->fetchColumn();
 
         if ($duplicateCount > 0) {
-            return false; 
+            return false;
         }
 
         $query = "INSERT INTO pigs (ear_tag_number, penId, status, gender, breed, pig_type, weight, age, notes) VALUES (:ear_tag_number, :penId, :status, :gender, :breed, :pig_type, :weight, :age, :notes)";
@@ -250,4 +250,14 @@ class inventoryController
         $stmt->execute([':penId' => $penId]); // Correctly bind the parameter
         return $stmt->fetch(PDO::FETCH_ASSOC); // Fetch as associative array
     }
+
+    public function getFeedstockData()
+    {
+        $query = 'SELECT feedsName, QtyOFoodPerSack FROM feedstock';
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    
 }

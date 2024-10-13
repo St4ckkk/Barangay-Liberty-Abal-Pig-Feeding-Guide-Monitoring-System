@@ -137,9 +137,18 @@ $error = '';
                                                         <td>₱<?= number_format($expense['total'], 2) ?></td>
                                                         <td><?= date('M d, Y', strtotime($expense['expenseDate'])) ?></td>
                                                         <td>
-                                                            <a href="editDisinfectionGuidelines.php?id=<?= $expense['expenseId'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
-                                                            <a href="deleteDisinfectionGuidelines.php?id=<?= $expense['expenseId'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                            <button class="btn btn-primary btn-edit" data-expense-id="<?= $expense['expenseId'] ?>"
+                                                                data-expense-name="<?= htmlspecialchars($expense['expenseName']) ?>"
+                                                                data-expense-type="<?= htmlspecialchars($expense['expenseType']) ?>"
+                                                                data-total="<?= $expense['total'] ?>"
+                                                                data-expense-date="<?= $expense['expenseDate'] ?>">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button class="btn btn-danger btn-delete" data-expense-id="<?= $expense['expenseId'] ?>">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
                                                         </td>
+
                                                     </tr>
                                                 <?php endforeach; ?>
                                             <?php else: ?>
@@ -192,6 +201,62 @@ $error = '';
             </div>
         </div>
     </main>
+    <!-- Edit Expense Modal -->
+    <div class="modal fade" id="editExpenseModal" tabindex="-1" aria-labelledby="editExpenseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editExpenseModalLabel">Edit Expense</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editExpenseForm">
+                    <div class="modal-body">
+                        <input type="hidden" name="expenseId" id="editExpenseId">
+                        <div class="mb-3">
+                            <label for="editExpenseName" class="form-label">Item Name</label>
+                            <input type="text" class="form-control" name="expenseName" id="editExpenseName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editExpenseType" class="form-label">Item Type</label>
+                            <input type="text" class="form-control" name="expenseType" id="editExpenseType" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTotalCost" class="form-label">Total Cost</label>
+                            <input type="number" class="form-control" name="total" id="editTotalCost" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPurchaseDate" class="form-label">Purchase Date</label>
+                            <input type="date" class="form-control" name="expenseDate" id="editPurchaseDate" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteExpenseModal" tabindex="-1" aria-labelledby="deleteExpenseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteExpenseModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this expense?
+                    <input type="hidden" id="deleteExpenseId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -210,7 +275,7 @@ $error = '';
             const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
             modal.hide();
 
-           
+
             const link = document.createElement('a');
             link.href = 'expense_report.php'; // The URL that generates the PDF
             link.download = 'Expense_Report.pdf'; // Optional: specify a default file name
@@ -219,6 +284,50 @@ $error = '';
             document.body.removeChild(link); // Remove link from body
         });
     </script>
+    <script>
+        // Edit Modal Handling
+        const editExpenseButtons = document.querySelectorAll('.btn-edit'); // Add class btn-edit to your edit buttons
+        editExpenseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const expenseId = this.getAttribute('data-expense-id'); // Add data attribute to your edit button
+                const expenseName = this.getAttribute('data-expense-name'); // Add data attribute to your edit button
+                const expenseType = this.getAttribute('data-expense-type'); // Add data attribute to your edit button
+                const total = this.getAttribute('data-total'); // Add data attribute to your edit button
+                const expenseDate = this.getAttribute('data-expense-date'); // Add data attribute to your edit button
+
+                // Fill the modal with existing expense data
+                document.getElementById('editExpenseId').value = expenseId;
+                document.getElementById('editExpenseName').value = expenseName;
+                document.getElementById('editExpenseType').value = expenseType;
+                document.getElementById('editTotalCost').value = total;
+                document.getElementById('editPurchaseDate').value = expenseDate;
+
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('editExpenseModal'));
+                modal.show();
+            });
+        });
+
+        // Delete Modal Handling
+        const deleteExpenseButtons = document.querySelectorAll('.btn-delete'); // Add class btn-delete to your delete buttons
+        deleteExpenseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const expenseId = this.getAttribute('data-expense-id'); // Add data attribute to your delete button
+                document.getElementById('deleteExpenseId').value = expenseId;
+
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('deleteExpenseModal'));
+                modal.show();
+            });
+        });
+
+        // Confirm Deletion
+        document.getElementById('confirmDelete').addEventListener('click', function() {
+            const expenseId = document.getElementById('deleteExpenseId').value;
+            window.location.href = 'deleteDisinfectionGuidelines.php?id=' + expenseId; // Redirect to your delete script
+        });
+    </script>
+
 
 </body>
 

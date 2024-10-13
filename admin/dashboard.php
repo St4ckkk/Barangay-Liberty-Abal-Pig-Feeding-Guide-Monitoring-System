@@ -1,14 +1,31 @@
   <?php
   include_once './core/Database.php';
+  include_once './core/indexController.php';
+  include_once './core/guidelinesController.php';
+  include_once './core/inventoryController.php';
   if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
     header('Location: index.php');
     exit();
   }
 
+  $controller = new indexController();
+  $guidelinesController = new guidelinesController();
+  $currentTotalPigs = $controller->getTotalPigs();
+  $previousTotalPigs = $controller->getPreviousTotalPigs();
+
+  $percentageChange = $controller->calculatePercentageChange($currentTotalPigs, $previousTotalPigs);
 
 
+  $changeDirection = $percentageChange > 0 ? 'increase' : 'decrease';
+  $totalPen = $controller->getTotalPen();
 
+  $feedstockController = new inventoryController();
+  $feedstockData = $feedstockController->getFeedstockData();
 
+  $guidelines = $guidelinesController->getFeedingGuidelines();
+  $cleaningGuidelines = $guidelinesController->getCleaningGuidelines();
+
+  echo "<script>var feedstockData = " . json_encode($feedstockData) . ";</script>";
 
   ?>
 
@@ -66,8 +83,56 @@
       }
 
       .guideline-card {
-        height: 300px;
-        overflow-y: auto;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+        backdrop-filter: blur(5px);
+      }
+
+      .guideline-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .guideline-header {
+        background-color: #418091;
+        color: white;
+        padding: 15px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .guideline-body {
+        padding: 20px;
+      }
+
+      .guideline-list {
+        list-style-type: none;
+        padding-left: 0;
+        margin-bottom: 0;
+      }
+
+      .guideline-list li {
+        margin-bottom: 10px;
+        padding-left: 30px;
+        position: relative;
+      }
+
+      .guideline-list li:before {
+        content: '•';
+        color: #418091;
+        font-size: 24px;
+        position: absolute;
+        left: 0;
+        top: -5px;
+      }
+
+      .guidelines-title {
+        color: #418091;
+        padding-top: 10px;
+        padding-left: 10px;
       }
     </style>
   </head>
@@ -80,7 +145,7 @@
 
     <main id="main" class="main" style="margin-top: 100px;">
       <div class="pagetitle">
-        <h1>Pig Feeding Guide and Monitoring Dashboard</h1>
+        <h1>Pig Feeding Guide and Monitoring System</h1>
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -94,10 +159,8 @@
           <!-- Left side columns -->
           <div class="col-lg-8">
             <div class="row gy-4">
-
               <div class="col-xxl-4 col-md-6">
                 <div class="card info-card sales-card">
-
                   <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
@@ -112,16 +175,20 @@
                   </div>
 
                   <div class="card-body">
-                    <h5 class="card-title">Sales <span>| Today</span></h5>
+                    <h5 class="card-title">Pigs <span>| Today</span></h5>
 
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-cart"></i>
+                        <img src="assets/img/pig-logo.png" alt="" srcset="" width="50">
                       </div>
                       <div class="ps-3">
-                        <h6>145</h6>
-                        <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-
+                        <h6><?php echo $currentTotalPigs; ?></h6>
+                        <span class="text-success small pt-1 fw-bold">
+                          <?php echo abs($percentageChange); ?>%
+                        </span>
+                        <span class="text-muted small pt-2 ps-1">
+                          <?php echo $changeDirection; ?>
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -132,7 +199,6 @@
               <!-- Active Pig Pens Card -->
               <div class="col-xxl-4 col-md-6">
                 <div class="card info-card sales-card">
-
                   <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
@@ -147,14 +213,14 @@
                   </div>
 
                   <div class="card-body">
-                    <h5 class="card-title">Sales <span>| Today</span></h5>
+                    <h5 class="card-title">Pen <span>| Today</span></h5>
 
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-cart"></i>
+                        <img src="assets/img/pigpen.png" alt="" srcset="" width="50">
                       </div>
                       <div class="ps-3">
-                        <h6>145</h6>
+                        <h6><?= $totalPen ?></h6>
                         <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
 
                       </div>
@@ -163,156 +229,75 @@
 
                 </div>
               </div>
-
-              <div class="col-xxl-4 col-md-6">
-                <div class="card info-card sales-card">
-
-                  <div class="filter">
-                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                      <li class="dropdown-header text-start">
-                        <h6>Filter</h6>
-                      </li>
-
-                      <li><a class="dropdown-item" href="#">Today</a></li>
-                      <li><a class="dropdown-item" href="#">This Month</a></li>
-                      <li><a class="dropdown-item" href="#">This Year</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="card-body">
-                    <h5 class="card-title">Sales <span>| Today</span></h5>
-
-                    <div class="d-flex align-items-center">
-                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-cart"></i>
-                      </div>
-                      <div class="ps-3">
-                        <h6>145</h6>
-                        <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              <!-- Feeding Guidelines -->
-              <div class="col-12">
-                <div class="card guideline-card">
-                  <div class="card-body">
-                    <h5 class="card-title">Feeding Guidelines</h5>
-                    <ul>
-                      <li>Provide fresh, clean water at all times</li>
-                      <li>Feed pigs according to their age and weight</li>
-                      <li>Starter feed: 18-20% protein for piglets up to 25 kg</li>
-                      <li>Grower feed: 16-18% protein for pigs 25-50 kg</li>
-                      <li>Finisher feed: 14-16% protein for pigs over 50 kg</li>
-                      <li>Monitor feed intake and adjust as necessary</li>
-                      <li>Implement a feeding schedule to maintain consistency</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Farrowing Guidelines -->
-              <div class="col-12">
-                <div class="card guideline-card">
-                  <div class="card-body">
-                    <h5 class="card-title">Farrowing Guidelines</h5>
-                    <ul>
-                      <li>Prepare farrowing crates 3-5 days before expected farrowing</li>
-                      <li>Ensure the farrowing area is clean, dry, and draft-free</li>
-                      <li>Monitor sows closely as farrowing approaches</li>
-                      <li>Assist with difficult births if necessary</li>
-                      <li>Ensure piglets receive colostrum within the first 6 hours</li>
-                      <li>Provide supplemental heat for piglets (35°C in the first week)</li>
-                      <li>Process piglets (tail docking, teeth clipping) within 24-48 hours</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Breeding Guidelines -->
-              <div class="col-12">
-                <div class="card guideline-card">
-                  <div class="card-body">
-                    <h5 class="card-title">Breeding Guidelines</h5>
-                    <ul>
-                      <li>Begin breeding gilts at 7-8 months of age or 135-150 kg</li>
-                      <li>Aim for 2.5 litters per sow per year</li>
-                      <li>Use artificial insemination or natural breeding methods</li>
-                      <li>Monitor for signs of heat (estrus) every 18-24 days</li>
-                      <li>Breed sows 12-24 hours after onset of standing heat</li>
-                      <li>Conduct pregnancy checks 28-35 days after breeding</li>
-                      <li>Provide proper nutrition for pregnant sows</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
             </div>
           </div>
+        </div>
 
-          <!-- Right side columns -->
-          <div class="col-lg-4">
-            <!-- Feed Stock -->
-            <div class="card">
-              <div class="card-body pb-0">
-                <h5 class="card-title">Feed Stock <span>| Today</span></h5>
-                <div id="feedStock" style="min-height: 400px;" class="echart"></div>
+        <div class="col-lg-12">
+          <div class="row">
+            <div class="col-md-6 grid-margin stretch-card d-flex">
+              <div class="card flex-fill">
+                <div class="card-people mt-auto">
+                  <img src="assets/img/bg.jpg" alt="people" width="100%" height="150px" style="object-fit: cover;">
+                  <div class="guidelines-title">
+                    <h3>Feeding Guidelines</h3>
+                  </div>
+                  <?php if (!empty($guidelines)) : ?>
+                    <?php foreach ($guidelines as $guideline) : ?>
+                      <div class="guideline-body">
+                        <ul class="guideline-list">
+                          <li><strong>Stage:</strong> <?= htmlspecialchars($guideline['pig_stage']) ?></li>
+                          <li><strong>Weight Range:</strong> <?= htmlspecialchars($guideline['weight_range']) ?></li>
+                          <li><strong>Feed Type:</strong> <?= htmlspecialchars($guideline['feed_type']) ?></li>
+                          <li><strong>Protein Content:</strong> <?= htmlspecialchars($guideline['protein_content']) ?>%</li>
+                          <li><strong>Feeding Frequency:</strong> <?= htmlspecialchars($guideline['feeding_frequency']) ?> times/day</li>
+                          <li><strong>Amount per Feeding:</strong> <?= htmlspecialchars($guideline['amount_per_feeding']) ?> kg</li>
+                          <li><strong>Special Instructions:</strong> <?= htmlspecialchars($guideline['special_instructions']) ?></li>
+                        </ul>
+                      </div>
+                    <?php endforeach; ?>
+                  <?php else : ?>
+                    <div class="col-12">
+                      <p class="text-center text-white">No feeding guidelines available.</p>
+                    </div>
+                  <?php endif; ?>
+                  <div class="weather-info">
+                    <div class="d-flex">
+                      <div class="ml-2">
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- Vitamins/Medicines Stock -->
-            <div class="card">
-              <div class="card-body pb-0">
-                <h5 class="card-title">Vitamins/Medicines Stock</h5>
-                <ul class="list-group">
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Vitamin A+D3+E
-                    <span class="badge bg-primary rounded-pill">50 units</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Iron Supplement
-                    <span class="badge bg-primary rounded-pill">100 units</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Antibiotic (General)
-                    <span class="badge bg-warning rounded-pill">10 units</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Dewormer
-                    <span class="badge bg-danger rounded-pill">5 units</span>
-                  </li>
-                </ul>
+            <div class="col-md-6 grid-margin stretch-card d-flex">
+              <div class="card flex-fill">
+                <div class="card-people">
+                  <img src="assets/img/bg.jpg" alt="people" width="100%" height="150px" style="object-fit: cover;">
+                  <div class="guidelines-title">
+                    <h3>Cleaning Guidelines</h3>
+                  </div>
+                  <?php if (!empty($cleaningGuidelines)) : ?>
+                    <?php foreach ($cleaningGuidelines as $guideline) : ?>
+                      <div class="guideline-body">
+                        <ul class="guideline-list">
+                          <li><strong>Category:</strong> <?= htmlspecialchars($guideline['category']) ?></li>
+                          <li><strong>Frequency:</strong> <?= htmlspecialchars($guideline['frequency']) ?></li>
+                          <li><strong>Importance:</strong> <?= htmlspecialchars($guideline['importance']) ?></li>
+                          <li><strong>Equipment:</strong> <?= htmlspecialchars($guideline['equipment']) ?></li>
+                          <li><strong>Safety Precautions:</strong> <?= htmlspecialchars($guideline['safety']) ?></li>
+                          <li><strong>Special Instructions:</strong> <?= htmlspecialchars($guideline['description']) ?></li>
+                        </ul>
+                      </div>
+                    <?php endforeach; ?>
+                  <?php else : ?>
+                    <p>No cleaning guidelines available.</p>
+                  <?php endif; ?>
+                </div>
               </div>
             </div>
-
-            <!-- Health Alerts -->
-            <div class="card">
-              <div class="card-body pb-0">
-                <h5 class="card-title">Health Alerts <span>| Today</span></h5>
-                <ul class="list-group">
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Pig #1024 - High Temperature
-                    <span class="badge bg-danger rounded-pill">Urgent</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Pen B2 - Low Water Consumption
-                    <span class="badge bg-warning rounded-pill">Warning</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Pig #2048 - Reduced Feed Intake
-                    <span class="badge bg-info rounded-pill">Monitor</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-          </div><!-- End Right side columns -->
-
+          </div>
         </div>
       </section>
 
@@ -334,38 +319,13 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        // Weight Trend Chart
-        var weightOptions = {
-          series: [{
-            name: 'Average Weight',
-            data: [65, 68, 71, 74, 77, 80, 83]
-          }],
-          chart: {
-            height: 350,
-            type: 'line',
-            zoom: {
-              enabled: false
-            }
-          },
-          dataLabels: {
-            enabled: false
-          },
-          stroke: {
-            curve: 'straight'
-          },
-          grid: {
-            row: {
-              colors: ['#f3f3f3', 'transparent'],
-              opacity: 0.5
-            },
-          },
-          xaxis: {
-            categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7'],
-          }
-        };
-
-        var weightChart = new ApexCharts(document.querySelector("#weightChart"), weightOptions);
-        weightChart.render();
+        // Convert the PHP feedstock data to an array that ECharts can use
+        let feedStockData = feedstockData.map(item => {
+          return {
+            value: item.QtyOFoodPerSack,
+            name: item.feedsName
+          };
+        });
 
         // Feed Stock Chart
         var feedStockChart = echarts.init(document.querySelector("#feedStock"));
@@ -396,23 +356,12 @@
             labelLine: {
               show: false
             },
-            data: [{
-                value: 1048,
-                name: 'Starter Feed'
-              },
-              {
-                value: 735,
-                name: 'Grower Feed'
-              },
-              {
-                value: 580,
-                name: 'Finisher Feed'
-              }
-            ]
+            data: feedStockData // Use the dynamically fetched data
           }]
         });
       });
     </script>
+
 
   </body>
 
