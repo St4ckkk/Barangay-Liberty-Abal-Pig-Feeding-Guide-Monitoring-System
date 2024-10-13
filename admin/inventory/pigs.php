@@ -148,7 +148,9 @@ $error = '';
                                                         <td><?= $pig['age'] ?></td>
                                                         <td><?= $pig['notes'] ?></td>
                                                         <td>
-                                                            <a href="#" class="btn btn-primary edit-button" data-bs-toggle="modal" data-bs-target="#editPigModal" data-pig='<?= json_encode($pig) ?>'><i class="bi bi-pencil"></i></a>
+                                                            <a href="#" class="btn btn-primary edit-button" data-bs-toggle="modal" data-bs-target="#editPigModal" data-pig='<?= htmlspecialchars(json_encode($pig), ENT_QUOTES) ?>'>
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
                                                             <a href="#" class="btn btn-danger delete-button" data-bs-toggle="modal" data-bs-target="#deletePigModal" data-pig-id="<?= $pig['pig_id'] ?>"><i class="bi bi-trash"></i></a>
 
                                                         </td>
@@ -224,6 +226,7 @@ $error = '';
                                         <option value="quarantined">Quarantined</option>
                                         <option value="vaccinated">Vaccinated</option>
                                         <option value="recovered">Recovered</option>
+                                        <option value="slaughtered">Slaughtered</option>
                                         <option value="being_transported">Being Transported</option>
                                     </select>
                                 </div>
@@ -289,10 +292,10 @@ $error = '';
                 </div>
                 <div class="modal-body">
                     <form action="editPig.php" method="post">
+                        <input type="hidden" class="form-control" id="penId" name="penId" value="<?= $inputId; ?>">
                         <input type="hidden" name="pig_id" id="editPigId" value="">
 
                         <div class="row">
-                            <!-- Left Column -->
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="editEarTagNumber" class="form-label">Ear Tag Number</label>
@@ -300,21 +303,51 @@ $error = '';
                                 </div>
                                 <div class="mb-3">
                                     <label for="editPigStatus" class="form-label">Status</label>
-                                    <select name="status" id="editPigStatus" class="form-control">
-                                        <option value="" selected disabled>Select Status</option>
-                                        <!-- Add status options here -->
+                                    <select name="status" id="editPigStatus" class="form-control" required>
+                                        <option value="" selected disabled>Select a Status of The Pig</option>
+                                        <option value="none">None</option>
+                                        <option value="healthy">Healthy</option>
+                                        <option value="sick">Sick</option>
+                                        <option value="dead">Dead</option>
+                                        <option value="injured">Injured</option>
+                                        <option value="ready_for_slaughter">Ready For Slaughter</option>
+                                        <option value="ready_for_breeding">Ready For Breeding</option>
+                                        <option value="ready_for_selling">Ready For Selling</option>
+                                        <option value="in_breeding">In Breeding</option>
+                                        <option value="pregnant">Pregnant</option>
+                                        <option value="lactating">Lactating</option>
+                                        <option value="underweight">Underweight</option>
+                                        <option value="overweight">Overweight</option>
+                                        <option value="weaning">Weaning</option>
+                                        <option value="sold">Sold</option>
+                                        <option value="quarantined">Quarantined</option>
+                                        <option value="vaccinated">Vaccinated</option>
+                                        <option value="recovered">Recovered</option>
+                                        <option value="slaughtered">Slaughtered</option>
+                                        <option value="being_transported">Being Transported</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="editPigType" class="form-label">Pig Type</label>
-                                    <select name="pigType" id="editPigType" class="form-control">
+                                    <select name="pigType" id="editPigType" class="form-control" required>
                                         <option value="" selected disabled>Select Pig Type</option>
-                                        <!-- Add pig type options here -->
+                                        <option value="piglet">Piglet</option>
+                                        <option value="weaner">Weaner</option>
+                                        <option value="grower">Grower</option>
+                                        <option value="finisher">Finisher</option>
+                                        <option value="sow">Sow</option>
+                                        <option value="gilt">Gilt</option>
+                                        <option value="boar">Boar</option>
+                                        <option value="barrow">Barrow</option>
+                                        <option value="stag">Stag</option>
+                                        <option value="shoat">Shoat</option>
+                                        <option value="farrow">Farrow</option>
+                                        <option value="hog">Hog</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="editGender" class="form-label">Gender</label>
-                                    <select name="gender" id="editGender" class="form-control">
+                                    <select name="gender" id="editGender" class="form-control" required>
                                         <option value="" selected disabled>Select Gender</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
@@ -330,11 +363,11 @@ $error = '';
                                 </div>
                                 <div class="mb-3">
                                     <label for="editWeight" class="form-label">Weight</label>
-                                    <input type="number" class="form-control" id="editWeight" name="weight" step="0.01">
+                                    <input type="number" class="form-control" id="editWeight" name="weight" step="0.01" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="editAge" class="form-label">Age</label>
-                                    <input type="number" class="form-control" id="editAge" name="age">
+                                    <input type="number" class="form-control" id="editAge" name="age" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="editNotes" class="form-label">Notes</label>
@@ -383,11 +416,14 @@ $error = '';
     <script src="../assets/js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle Edit Modal
-            const editButtons = document.querySelectorAll('.edit-button'); // assuming class 'edit-button' for edit buttons
+
+            const editButtons = document.querySelectorAll('.edit-button'); // Select all edit buttons
             editButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    const pig = JSON.parse(this.getAttribute('data-pig')); // assumes pig data in a 'data-pig' attribute
+                    // Parse the pig data from the data attribute
+                    const pig = JSON.parse(this.getAttribute('data-pig'));
+
+                    // Populate the modal input fields with the pig data
                     document.getElementById('editPigId').value = pig.pig_id;
                     document.getElementById('editEarTagNumber').value = pig.ear_tag_number;
                     document.getElementById('editPigStatus').value = pig.status;
@@ -399,6 +435,7 @@ $error = '';
                     document.getElementById('editNotes').value = pig.notes;
                 });
             });
+
 
             // Handle Delete Modal
             const deleteButtons = document.querySelectorAll('.delete-button'); // assuming class 'delete-button' for delete buttons

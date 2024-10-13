@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 "New Feeding Schedule",     
                 "A new Feeding schedule has been added. Please check for details.",
                 $feeding_id,
-                ""
+                "Feeding Schedule",
             );
             $_SESSION['success'] = "Feeding schedule added successfully.";
         } else {

@@ -369,19 +369,7 @@ $maleSires = $settingsController->getMaleSire();
         document.addEventListener('DOMContentLoaded', function() {
             const damsSelect = document.getElementById('pigsSelect');
             const sireSelect = document.getElementById('sireSelect');
-            const nameInputs = document.getElementById('nameInputs');
             const penSelect = document.getElementById('penno');
-
-            function checkSelections() {
-                if (damsSelect.value && sireSelect.value) {
-                    nameInputs.style.display = 'block';
-                } else {
-                    nameInputs.style.display = 'none';
-                }
-            }
-
-            damsSelect.addEventListener('change', checkSelections);
-            sireSelect.addEventListener('change', checkSelections);
 
             penSelect.addEventListener('change', function() {
                 const selectedPenId = this.value;
@@ -389,26 +377,24 @@ $maleSires = $settingsController->getMaleSire();
                     fetch(`fetchParrowingPigs.php?pen_id=${selectedPenId}`)
                         .then(response => response.json())
                         .then(data => {
+                            // Clear existing options and add the new ones for dams
                             damsSelect.innerHTML = '<option value="" disabled selected>--Select Dams--</option>';
                             data.forEach(pig => {
                                 const option = document.createElement('option');
-                                option.value = pig.pig_id;
-                                option.textContent = `${pig.ear_tag_number} - ${pig.breed}`;
+                                option.value = pig.pig_id; // Assuming pig_id is the unique identifier
+                                option.textContent = `${pig.ear_tag_number} - ${pig.breed}`; // Display ear tag and breed
                                 damsSelect.appendChild(option);
                             });
-                            damsSelect.disabled = false;
-                            checkSelections();
+                            damsSelect.disabled = false; // Enable the dams select
                         })
                         .catch(error => console.error('Error:', error));
                 } else {
                     damsSelect.innerHTML = '<option value="" disabled selected>--Select Dams--</option>';
-                    damsSelect.disabled = true;
-                    checkSelections();
+                    damsSelect.disabled = true; // Disable if no pen is selected
                 }
             });
         });
     </script>
-
     <script>
         // JavaScript to handle the modal data population
         const editModal = document.getElementById('editFarrowingPeriodModal');

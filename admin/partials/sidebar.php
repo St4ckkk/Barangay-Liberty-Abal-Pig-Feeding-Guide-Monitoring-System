@@ -50,23 +50,25 @@ $is_schedule_active = in_array($current_page, $schedule_pages);
         <?php endif; ?>
 
         <!-- Guidelines Section -->
-        <li class="nav-item">
-            <a class="nav-link <?php echo $is_guidelines_active ? '' : 'collapsed'; ?> <?php echo $is_guidelines_active ? 'active' : ''; ?>" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#" aria-expanded="<?php echo $is_guidelines_active ? 'true' : 'false'; ?>">
-                <i class="bi bi-book"></i><span>Guidelines</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="components-nav" class="nav-content collapse <?php echo $is_guidelines_active ? 'show' : ''; ?>" data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="<?php echo $base_url2; ?>feeding-guidelines.php" class="<?php echo ($current_page == 'feeding-guidelines.php') ? 'active' : ''; ?>">
-                        <span>Feeding Guidelines</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?php echo $base_url2; ?>disinfection-guidelines.php" class="<?php echo ($current_page == 'disinfection-guidelines.php') ? 'active' : ''; ?>">
-                        <span>Cleaning Guidelines</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
+        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <li class="nav-item">
+                <a class="nav-link <?php echo $is_guidelines_active ? '' : 'collapsed'; ?> <?php echo $is_guidelines_active ? 'active' : ''; ?>" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#" aria-expanded="<?php echo $is_guidelines_active ? 'true' : 'false'; ?>">
+                    <i class="bi bi-book"></i><span>Guidelines</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="components-nav" class="nav-content collapse <?php echo $is_guidelines_active ? 'show' : ''; ?>" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="<?php echo $base_url2; ?>feeding-guidelines.php" class="<?php echo ($current_page == 'feeding-guidelines.php') ? 'active' : ''; ?>">
+                            <span>Feeding Guidelines</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $base_url2; ?>disinfection-guidelines.php" class="<?php echo ($current_page == 'disinfection-guidelines.php') ? 'active' : ''; ?>">
+                            <span>Cleaning Guidelines</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        <?php endif; ?>
 
         <!-- Inventory Section -->
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
@@ -80,11 +82,11 @@ $is_schedule_active = in_array($current_page, $schedule_pages);
                             </i><span>Feed Stocks</span>
                         </a>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="<?php echo $base_url_inventory; ?>vitStocks.php" class="<?php echo ($current_page == 'vitStocks.php') ? 'active' : ''; ?>">
                             <span>Vitamins/Medicines Stocks</span>
                         </a>
-                    </li>
+                    </li> -->
                     <li>
                         <a href="<?php echo $base_url_inventory; ?>pen.php" class="<?php echo ($current_page == 'pen.php') ? 'active' : ''; ?>">
                             <span>Pig Pen</span>
@@ -102,11 +104,6 @@ $is_schedule_active = in_array($current_page, $schedule_pages);
                 <li>
                     <a href="<?php echo $base_url_schedule; ?>feedingSchedule.php" class="<?php echo ($current_page == 'feedingPeriod.php') ? 'active' : ''; ?>">
                         <span>Feeding Schedule</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?php echo $base_url_schedule; ?>cleaningSchedule.php" class="<?php echo ($current_page == 'cleaningPeriod.php') ? 'active' : ''; ?>">
-                        <span>Cleaning Schedule</span>
                     </a>
                 </li>
                 <li>
@@ -145,11 +142,11 @@ $is_schedule_active = in_array($current_page, $schedule_pages);
                             <span>Cleaning Time</span>
                         </a>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="<?php echo $base_url_settings; ?>biv.php" class="<?php echo ($current_page == 'biv.php') ? 'active' : ''; ?>">
                             <span>Boosting/Injections/Vitamins</span>
                         </a>
-                    </li>
+                    </li> -->
                     <li>
                         <a href="<?php echo $base_url_settings; ?>slaughteringPeriod.php" class="<?php echo ($current_page == 'slaughteringPeriod.php') ? 'active' : ''; ?>">
                             <span>Slaughtering Period</span>

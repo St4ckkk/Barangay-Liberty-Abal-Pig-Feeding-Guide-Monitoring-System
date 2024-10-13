@@ -3,6 +3,7 @@
 $base_url = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/schedule';
 $base_url2 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/core/';
 $base_url3 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/';
+$base_url4 = '/Barangay-Liberty-Abal-Pig-Feeding-Guide-Monitoring-System/admin/schedule/';
 $current_page = basename($_SERVER['PHP_SELF']);
 $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : null;
 
@@ -15,7 +16,6 @@ $currentTime = date('Y-m-d H:i:s');
 $notifications = ($userRole === 'worker') ? $notificationController->getNotification() : [];
 
 ?>
-
 
 <header id="header" class="header fixed-top d-flex align-items-center" style="background-color:#418091; padding: 10px 20px;">
   <i class="bi bi-list toggle-sidebar-btn me-3" style="color: white; font-size: 1.5rem; cursor: pointer;"></i>
@@ -47,7 +47,30 @@ $notifications = ($userRole === 'worker') ? $notificationController->getNotifica
               <?php foreach ($notifications as $notification): ?>
                 <li class="notification-item">
                   <div>
-                    <a href="<?= $base_url ?>/notification.php?id=<?= urlencode($notification['id']); ?>" style="color: black; text-decoration: none;">
+                    <?php
+                    // Determine the link based on the type of notification
+                    $notificationType = $notification['actionType']; // Assuming 'type' field exists
+                    $link = '';
+
+                    switch ($notificationType) {
+                      case 'slaughter':
+                        $link = $base_url4 . 'slaughter.php?id=' . urlencode($notification['id']);
+                        break;
+                      case 'feeding':
+                        $link = $base_url4 . 'feeding.php?id=' . urlencode($notification['id']);
+                        break;
+                      case 'cleaning':
+                        $link = $base_url4 . 'cleaning.php?id=' . urlencode($notification['id']);
+                        break;
+                      case 'farrowing':
+                        $link = $base_url4 . 'farrowing.php?id=' . urlencode($notification['id']);
+                        break;
+                      default:
+                        $link = $base_url4 . 'notification.php?id=' . urlencode($notification['id']);
+                        break;
+                    }
+                    ?>
+                    <a href="<?= $link ?>" style="color: black; text-decoration: none;">
                       <strong><?= htmlspecialchars($notification['title']); ?></strong>
                       <p style="color: black; margin: 0;"><?= htmlspecialchars($notification['message']); ?></p>
                     </a>

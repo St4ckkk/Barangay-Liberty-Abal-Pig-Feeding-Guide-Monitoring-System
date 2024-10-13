@@ -71,29 +71,6 @@ class inventoryController
     }
 
 
-    public function addSows($penId, $pigs, $status)
-    {
-        $query = "INSERT INTO sows (penId, pigId, status) VALUES (:penId, :pigId, :status)";
-        $params = [
-            ':penId' => $penId,
-            ':pigId' => $pigs,
-            ':status' => $status
-        ];
-        $stmt = $this->db->prepare($query);
-        return $stmt->execute($params);
-    }
-    public function getSows()
-    {
-        $query = "
-        SELECT sows.*, pigpen.penno, pigs.ear_tag_number, pigs.weight, pigs.acquisition_date, pigs.age, pigs.breed
-        FROM sows
-        JOIN pigpen ON sows.penId = pigpen.penId
-        JOIN pigs ON sows.pigId = pigs.pig_id
-    ";
-        $stmt  = $this->db->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
 
 
     public function getPigs($penId)
@@ -207,7 +184,7 @@ class inventoryController
         FROM pigs 
         WHERE penId = :penId 
         AND gender = 'female' 
-        AND status IN ('ready for breeding', 'in breeding')
+        AND status IN ('ready_for_breeding', 'in_breeding')
         AND health_status = 'healthy'
         ";
         $stmt = $this->db->prepare($query);
@@ -314,5 +291,35 @@ class inventoryController
 
         $stmt = $this->db->prepare("DELETE FROM pigpen WHERE penId = ?");
         return $stmt->execute([$penId]);
+    }
+
+    public function updatePig($pig_id, $ear_tag_number, $status, $gender, $breed, $pig_type, $weight, $age, $notes)
+    {
+        $query = "UPDATE pigs SET 
+                    ear_tag_number = :ear_tag_number, 
+                    status = :status, 
+                    gender = :gender, 
+                    breed = :breed, 
+                    pig_type = :pig_type, 
+                    weight = :weight, 
+                    age = :age, 
+                    notes = :notes, 
+                    updated_at = NOW() 
+                  WHERE pig_id = :pig_id";
+
+        $params = [
+            ':pig_id' => $pig_id,
+            ':ear_tag_number' => $ear_tag_number,
+            ':status' => $status,
+            ':gender' => $gender,
+            ':breed' => $breed,
+            ':pig_type' => $pig_type,
+            ':weight' => $weight,
+            ':age' => $age,
+            ':notes' => $notes
+        ];
+
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
     }
 }

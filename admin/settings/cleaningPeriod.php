@@ -127,8 +127,20 @@ $error = '';
                                                             <?= !empty($cleaning['evening_cleaning_time']) ? date('h:i A', strtotime($cleaning['evening_cleaning_time'])) : 'N/A'; ?>
                                                         </td>
                                                         <td>
-                                                            <a href="editCleaningPeriod.php?id=<?= $cleaning['cleaning_id'] ?>" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
-                                                            <a href="deleteCleaningPeriod.php?id=<?= $cleaning['cleaning_id'] ?>" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                                            <button class="btn btn-primary editBtn"
+                                                                data-id="<?= $cleaning['cleaning_id'] ?>"
+                                                                data-frequency="<?= $cleaning['cleaning_frequency'] ?>"
+                                                                data-morning="<?= $cleaning['morning_cleaning_time'] ?>"
+                                                                data-noon="<?= $cleaning['noon_cleaning_time'] ?>"
+                                                                data-evening="<?= $cleaning['evening_cleaning_time'] ?>"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#editModal">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+
+                                                            <button class="btn btn-danger deleteBtn" data-id="<?= $cleaning['cleaning_id'] ?>" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 <?php endforeach; ?>
@@ -201,6 +213,72 @@ $error = '';
         </section>
     </main>
 
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Cleaning Period</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" action="editCleaningPeriod.php" method="POST">
+                        <input type="hidden" name="id" id="editId">
+                        <div class="mb-3">
+                            <label for="editFeedingFrequency" class="form-label">Cleaning Frequency</label>
+                            <select name="cleaningFrequency" id="editFeedingFrequency" class="form-select">
+                                <option value="once">Once a day</option>
+                                <option value="twice">Twice a day</option>
+                                <option value="thrice">Thrice a day</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        <div id="editFeedingTimes">
+                            <div class="mb-3">
+                                <label for="editMorningTime" class="form-label">Morning Cleaning Time</label>
+                                <input type="time" name="morningTime" id="editMorningTime" class="form-control">
+                            </div>
+                            <div class="mb-3" id="editNoonTimeContainer" style="display: none;">
+                                <label for="editNoonTime" class="form-label">Noon Cleaning Time</label>
+                                <input type="time" name="noonTime" id="editNoonTime" class="form-control">
+                            </div>
+                            <div class="mb-3" id="editEveningTimeContainer" style="display: none;">
+                                <label for="editEveningTime" class="form-label">Evening Cleaning Time</label>
+                                <input type="time" name="eveningTime" id="editEveningTime" class="form-control">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="editForm" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Cleaning Period</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this feeding period?
+                </div>
+                <div class="modal-footer">
+                    <form id="deleteForm" action="deleteCleaningPeriod.php" method="POST">
+                        <input type="text" name="id" id="deleteId">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
     <script src="../assets/vendor/apexcharts/apexcharts.min.js"></script>
@@ -230,6 +308,62 @@ $error = '';
 
             cleaningFrequency.addEventListener('change', updateCleaningTimes);
             updateCleaningTimes();
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const editFeedingFrequency = document.getElementById('editFeedingFrequency');
+            const editMorningTime = document.getElementById('editMorningTime');
+            const editNoonTime = document.getElementById('editNoonTime');
+            const editEveningTime = document.getElementById('editEveningTime');
+            const editNoonTimeContainer = document.getElementById('editNoonTimeContainer');
+            const editEveningTimeContainer = document.getElementById('editEveningTimeContainer');
+
+            function updateEditFeedingTimes() {
+                const frequency = editFeedingFrequency.value;
+
+                // Always show morning time
+                editMorningTime.parentElement.style.display = 'block';
+                // Show noon time based on frequency
+                editNoonTimeContainer.style.display = (frequency === 'thrice' || frequency === 'custom') ? 'block' : 'none';
+                // Show evening time based on frequency
+                editEveningTimeContainer.style.display = (frequency === 'twice' || frequency === 'thrice' || frequency === 'custom') ? 'block' : 'none';
+            }
+
+            // Event listener for frequency change in the edit modal
+            editFeedingFrequency.addEventListener('change', updateEditFeedingTimes);
+
+            // When the modal is opened, set the values
+            const editModal = document.getElementById('editModal');
+            editModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget; // Button that triggered the modal
+                const id = button.getAttribute('data-id'); // Extract info from data-* attributes
+                const frequency = button.getAttribute('data-frequency');
+                const morningTimeValue = button.getAttribute('data-morning');
+                const noonTimeValue = button.getAttribute('data-noon');
+                const eveningTimeValue = button.getAttribute('data-evening');
+
+                // Update the modal's content
+                this.querySelector('#editId').value = id;
+                this.querySelector('#editFeedingFrequency').value = frequency;
+                this.querySelector('#editMorningTime').value = morningTimeValue;
+                this.querySelector('#editNoonTime').value = noonTimeValue;
+                this.querySelector('#editEveningTime').value = eveningTimeValue;
+
+                // Update times based on frequency
+                updateEditFeedingTimes();
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Delete button click handler
+            const deleteButtons = document.querySelectorAll('.deleteBtn');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    document.getElementById('deleteId').value = id;
+                });
+            });
         });
     </script>
 </body>
