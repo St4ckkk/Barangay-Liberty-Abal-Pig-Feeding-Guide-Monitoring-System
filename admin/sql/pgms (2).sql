@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 12, 2024 at 10:58 AM
+-- Generation Time: Oct 13, 2024 at 12:31 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,24 @@ SET time_zone = "+00:00";
 --
 -- Database: `pgms`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cleaning_guidelines`
+--
+
+CREATE TABLE `cleaning_guidelines` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `category` varchar(100) NOT NULL,
+  `description` text NOT NULL,
+  `frequency` varchar(100) NOT NULL,
+  `importance` varchar(50) NOT NULL,
+  `equipment` text NOT NULL,
+  `safety` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -42,30 +60,9 @@ CREATE TABLE `cleaning_period` (
 --
 
 INSERT INTO `cleaning_period` (`cleaning_id`, `cleaning_frequency`, `morning_cleaning_time`, `noon_cleaning_time`, `evening_cleaning_time`, `created_at`, `updated_at`) VALUES
-(1, 'once', '09:17:00', NULL, NULL, '2024-10-12 01:17:02', '2024-10-12 01:17:02');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `disinfectionguidelines`
---
-
-CREATE TABLE `disinfectionguidelines` (
-  `guideId` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text NOT NULL,
-  `guideDate` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `disinfectionguidelines`
---
-
-INSERT INTO `disinfectionguidelines` (`guideId`, `title`, `description`, `guideDate`) VALUES
-(7, 'hamburger', 'qwjpqjwe', '2024-10-10 00:10:05'),
-(8, 'wow', 'wowo', '2024-10-10 00:11:11'),
-(9, 'haloo', 'qweq', '2024-10-10 00:12:43'),
-(10, 'wowo', 'wowoow', '2024-10-10 00:13:18');
+(3, 'once', '02:26:00', NULL, NULL, '2024-10-13 06:26:25', '2024-10-13 06:26:25'),
+(4, 'once', '17:59:00', NULL, NULL, '2024-10-13 09:59:32', '2024-10-13 09:59:32'),
+(5, 'once', '05:00:00', NULL, NULL, '2024-10-13 09:59:54', '2024-10-13 09:59:54');
 
 -- --------------------------------------------------------
 
@@ -87,7 +84,9 @@ CREATE TABLE `expense` (
 
 INSERT INTO `expense` (`expenseId`, `expenseName`, `expenseType`, `total`, `expenseDate`) VALUES
 (2, 'Starter', 'Feeds', 1000.00, NULL),
-(3, 'Grower', 'Feeds', 1000.00, '2024-10-11');
+(3, 'Grower', 'Feeds', 1000.00, '2024-10-11'),
+(4, 'Starter', 'Feeds', 1000.00, '2024-10-14'),
+(5, 'qwe', 'Feeds', 199.00, '2024-10-14');
 
 -- --------------------------------------------------------
 
@@ -112,25 +111,22 @@ CREATE TABLE `farrowing` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `feedingguidelines`
+-- Table structure for table `feeding_guidelines`
 --
 
-CREATE TABLE `feedingguidelines` (
-  `guideId` int(11) NOT NULL,
+CREATE TABLE `feeding_guidelines` (
+  `guide_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
-  `description` text NOT NULL,
-  `guideDate` timestamp NOT NULL DEFAULT current_timestamp()
+  `pig_stage` enum('newborn','weaner','grower','finisher','sow','lactating','boar') NOT NULL,
+  `weight_range` varchar(50) DEFAULT NULL,
+  `feed_type` varchar(100) NOT NULL,
+  `protein_content` decimal(5,2) NOT NULL,
+  `feeding_frequency` varchar(100) DEFAULT NULL,
+  `amount_per_feeding` decimal(5,2) NOT NULL,
+  `special_instructions` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `feedingguidelines`
---
-
-INSERT INTO `feedingguidelines` (`guideId`, `title`, `description`, `guideDate`) VALUES
-(1, 'test', 'test', '2024-10-10 00:05:58'),
-(2, 'hamburger', 'hamburger', '2024-10-10 00:09:40'),
-(3, 'sheesh', 'qwjpoqwe', '2024-10-10 00:13:29'),
-(4, 'we', 'qwe', '2024-10-10 00:41:08');
 
 -- --------------------------------------------------------
 
@@ -153,8 +149,7 @@ CREATE TABLE `feeding_period` (
 --
 
 INSERT INTO `feeding_period` (`feeding_id`, `feeding_frequency`, `morning_feeding_time`, `noon_feeding_time`, `evening_feeding_time`, `created_at`, `updated_at`) VALUES
-(16, 'once', '03:45:00', NULL, NULL, '2024-10-12 07:45:51', '2024-10-12 07:45:51'),
-(17, 'once', '03:47:00', NULL, NULL, '2024-10-12 07:47:18', '2024-10-12 07:47:18');
+(44, 'once', '05:59:00', NULL, NULL, '2024-10-13 09:59:19', '2024-10-13 09:59:19');
 
 -- --------------------------------------------------------
 
@@ -176,8 +171,7 @@ CREATE TABLE `feedstock` (
 --
 
 INSERT INTO `feedstock` (`id`, `feedsName`, `feedsDescription`, `feedsCost`, `feed_purchase_date`, `QtyOFoodPerSack`) VALUES
-(3, 'Starter', 'qweqwe', 1000.00, NULL, 1.00),
-(4, 'Grower', 'qweqwe', 1000.00, '2024-10-11', 50.00);
+(6, 'qwe', 'qwe', 199.00, '2024-10-14', 199.00);
 
 -- --------------------------------------------------------
 
@@ -209,9 +203,22 @@ CREATE TABLE `notifications` (
   `id` int(11) NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `message` text DEFAULT NULL,
+  `userId` int(11) DEFAULT NULL,
   `refId` int(11) DEFAULT NULL,
-  `actionType` varchar(150) DEFAULT NULL
+  `actionType` varchar(150) DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `title`, `message`, `userId`, `refId`, `actionType`, `createdAt`, `updatedAt`) VALUES
+(26, 'New Feeding Schedule', 'A new Feeding schedule has been added. Please check for details.', 7, 44, 'feeding', '2024-10-13 09:59:19', '2024-10-13 10:07:31'),
+(27, 'New Cleaning Schedule', 'A new cleaning schedule has been added. Please check for details.', 7, 3, 'cleaning', '2024-10-13 09:59:32', '2024-10-13 10:20:34'),
+(28, 'New Cleaning Schedule', 'A new cleaning schedule has been added. Please check for details.', 7, 1, 'Cleaning Schedule', '2024-10-13 09:59:54', '2024-10-13 09:59:54'),
+(29, 'Slaughtering Schedule Update', 'The slaughtering schedule has been updated to: Date - 2024-10-14, Time - 04:51:00.', 7, 14, 'slaughter', '2024-10-13 10:26:02', '2024-10-13 10:27:31');
 
 -- --------------------------------------------------------
 
@@ -231,8 +238,7 @@ CREATE TABLE `pigpen` (
 --
 
 INSERT INTO `pigpen` (`penId`, `penno`, `penstatus`, `pigcount`) VALUES
-(5, '1', 'active', 18),
-(6, '2', 'active', 50);
+(5, '5', 'active', 17);
 
 -- --------------------------------------------------------
 
@@ -250,16 +256,18 @@ CREATE TABLE `pigs` (
   `pig_type` varchar(150) DEFAULT NULL,
   `weight` decimal(5,2) DEFAULT NULL,
   `age` varchar(255) DEFAULT NULL,
-  `notes` text DEFAULT NULL
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `pigs`
 --
 
-INSERT INTO `pigs` (`pig_id`, `ear_tag_number`, `penId`, `status`, `gender`, `breed`, `pig_type`, `weight`, `age`, `notes`) VALUES
-(18, 'ETN001', 5, 'ready for slaughtering', 'male', 'AMBOT', NULL, 135.00, '5', 'QWE'),
-(20, 'ETN002', 5, 'ready for breeding', 'female', 'hamburger', 'piglet', 150.00, '2 months', 'qwe');
+INSERT INTO `pigs` (`pig_id`, `ear_tag_number`, `penId`, `status`, `gender`, `breed`, `pig_type`, `weight`, `age`, `notes`, `created_at`, `updated_at`) VALUES
+(18, 'ETN001', 5, 'slaughtered', 'female', 'baboy ramo', 'grower', 130.00, '10', 'qwe', '2024-10-12 13:32:11', '2024-10-13 10:26:02'),
+(21, 'ETN002', 5, 'slaughtered', 'male', 'baboy ramo', 'boar', 130.00, '5', 'qweqwe', '2024-10-13 07:09:10', '2024-10-13 09:05:52');
 
 -- --------------------------------------------------------
 
@@ -305,7 +313,8 @@ CREATE TABLE `slaughtering_period` (
 --
 
 INSERT INTO `slaughtering_period` (`slauId`, `penId`, `pigId`, `slaughtering_date`, `slaughtering_time`, `status`, `created_at`, `updated_at`) VALUES
-(7, 5, 18, '2024-10-01', '11:29:00', 'process', '2024-10-12 03:29:07', '2024-10-12 03:29:07');
+(14, 5, 18, '2024-10-14', '04:51:00', 'process', '2024-10-13 08:51:12', '2024-10-13 10:26:02'),
+(15, 5, 21, '2024-10-14', '04:58:00', 'done', '2024-10-13 08:58:30', '2024-10-13 09:05:52');
 
 -- --------------------------------------------------------
 
@@ -327,23 +336,23 @@ CREATE TABLE `useraccount` (
 
 INSERT INTO `useraccount` (`userId`, `username`, `password`, `role`, `status`) VALUES
 (1, 'admin', '$2y$10$lHnrz8hN5vKF7vCjrkAksONVnGO53iWxgclkgpcpfJLUs.H0mU4PS', 'admin', 'active'),
-(5, 'farmer', '$2y$10$J3SFPwY4jLchbCW/hp35EemV6QxfjYfxRdfOyt0o3fOlJSw.FU4AC', 'worker', 'inactive');
+(7, 'ker', '$2y$10$5sphfzO.lEVyxEmk2.ayNOmyMZpOqOuu6dcxlvzGJKcTIF88UQpI6', 'worker', 'active');
 
 --
 -- Indexes for dumped tables
 --
 
 --
+-- Indexes for table `cleaning_guidelines`
+--
+ALTER TABLE `cleaning_guidelines`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `cleaning_period`
 --
 ALTER TABLE `cleaning_period`
   ADD PRIMARY KEY (`cleaning_id`);
-
---
--- Indexes for table `disinfectionguidelines`
---
-ALTER TABLE `disinfectionguidelines`
-  ADD PRIMARY KEY (`guideId`);
 
 --
 -- Indexes for table `expense`
@@ -360,10 +369,10 @@ ALTER TABLE `farrowing`
   ADD KEY `penId` (`penId`);
 
 --
--- Indexes for table `feedingguidelines`
+-- Indexes for table `feeding_guidelines`
 --
-ALTER TABLE `feedingguidelines`
-  ADD PRIMARY KEY (`guideId`);
+ALTER TABLE `feeding_guidelines`
+  ADD PRIMARY KEY (`guide_id`);
 
 --
 -- Indexes for table `feeding_period`
@@ -387,7 +396,8 @@ ALTER TABLE `healthguidelines`
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_user` (`userId`);
 
 --
 -- Indexes for table `pigpen`
@@ -428,46 +438,46 @@ ALTER TABLE `useraccount`
 --
 
 --
+-- AUTO_INCREMENT for table `cleaning_guidelines`
+--
+ALTER TABLE `cleaning_guidelines`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `cleaning_period`
 --
 ALTER TABLE `cleaning_period`
-  MODIFY `cleaning_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `disinfectionguidelines`
---
-ALTER TABLE `disinfectionguidelines`
-  MODIFY `guideId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `cleaning_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `expense`
 --
 ALTER TABLE `expense`
-  MODIFY `expenseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `expenseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `farrowing`
 --
 ALTER TABLE `farrowing`
-  MODIFY `farrowingId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `farrowingId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `feedingguidelines`
+-- AUTO_INCREMENT for table `feeding_guidelines`
 --
-ALTER TABLE `feedingguidelines`
-  MODIFY `guideId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+ALTER TABLE `feeding_guidelines`
+  MODIFY `guide_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `feeding_period`
 --
 ALTER TABLE `feeding_period`
-  MODIFY `feeding_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `feeding_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `feedstock`
 --
 ALTER TABLE `feedstock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `healthguidelines`
@@ -479,7 +489,7 @@ ALTER TABLE `healthguidelines`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `pigpen`
@@ -491,7 +501,7 @@ ALTER TABLE `pigpen`
 -- AUTO_INCREMENT for table `pigs`
 --
 ALTER TABLE `pigs`
-  MODIFY `pig_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `pig_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `pigsguidelines`
@@ -503,13 +513,13 @@ ALTER TABLE `pigsguidelines`
 -- AUTO_INCREMENT for table `slaughtering_period`
 --
 ALTER TABLE `slaughtering_period`
-  MODIFY `slauId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `slauId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `useraccount`
 --
 ALTER TABLE `useraccount`
-  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
@@ -521,6 +531,12 @@ ALTER TABLE `useraccount`
 ALTER TABLE `farrowing`
   ADD CONSTRAINT `farrowing_ibfk_1` FOREIGN KEY (`pigId`) REFERENCES `pigs` (`pig_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `farrowing_ibfk_2` FOREIGN KEY (`penId`) REFERENCES `pigpen` (`penId`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `fk_user` FOREIGN KEY (`userId`) REFERENCES `useraccount` (`userId`);
 
 --
 -- Constraints for table `pigs`

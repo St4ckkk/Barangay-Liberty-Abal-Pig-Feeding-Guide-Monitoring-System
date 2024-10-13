@@ -107,4 +107,25 @@ class notificationController
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result ?: null; // Return null if no result found
     }
+
+
+    public function getFarrowingNotificationById($id)
+    {
+        $sql = "SELECT n.*, f.farrowingId, f.breeding_date, f.expected_farrowing_date, 
+                   f.actual_farrowing_date, f.sire, f.pregnancy_status, 
+                   f.health_status, f.litter_size, f.notes, 
+                   p.penno, pg.ear_tag_number
+            FROM notifications n
+            LEFT JOIN farrowing f ON n.refId = f.farrowingId  -- Join with farrowing using refId
+            LEFT JOIN pigpen p ON f.penId = p.penId
+            LEFT JOIN pigs pg ON f.pigId = pg.pig_id
+            WHERE n.id = :id"; // Fetch notification by its ID
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null; // Return null if no result found
+    }
 }
