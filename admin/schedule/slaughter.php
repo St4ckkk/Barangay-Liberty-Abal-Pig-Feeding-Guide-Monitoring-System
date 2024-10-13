@@ -95,6 +95,7 @@ if ($notificationId) {
                                                 <th>Morning Feeding Time</th>
                                                 <th>Noon Feeding Time</th>
                                                 <th>Evening Feeding Time</th>
+                                                <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
